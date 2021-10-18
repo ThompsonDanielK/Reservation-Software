@@ -1,12 +1,19 @@
 ﻿using ProjectOrganizer.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace ProjectOrganizer.DAL
 {
     public class EmployeeSqlDAO : IEmployeeDAO
     {
         private readonly string connectionString;
+
+        private const string SqlSelectAll = "SELECT * FROM dbo.employee";
+
+        private const string SqlSearchByName = "SELECT * FROM dbo.employee WHERE first_name = @firstname AND last_name = @lastname";
+
+        private const string SqlSearchForNull = "SELECT * FROM dbo.employee e LEFT JOIN dbo.project_employee pe ON pe.employee_id = e.employee_id WHERE pe.project_id IS NULL";
 
         // Single Parameter Constructor
         public EmployeeSqlDAO(string dbConnectionString)
@@ -20,7 +27,41 @@ namespace ProjectOrganizer.DAL
         /// <returns>A list of all employees.</returns>
         public ICollection<Employee> GetAllEmployees()
         {
-            throw new NotImplementedException();
+            List<Employee> results = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlSelectAll, conn);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee employee = new Employee
+                        {
+                            EmployeeId = Convert.ToInt32(reader["employee_id"]),
+                            DepartmentId = Convert.ToInt32(reader["employee_id"]),
+                            FirstName = Convert.ToString(reader["first_name"]),
+                            LastName = Convert.ToString(reader["last_name"]),
+                            JobTitle = Convert.ToString(reader["job_title"]),
+                            BirthDate = Convert.ToDateTime(reader["birth_date"]),
+                            HireDate = Convert.ToDateTime(reader["hire_date"])
+                        };
+
+                        results.Add(employee);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Could not query the database: " + ex.Message);
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -33,7 +74,43 @@ namespace ProjectOrganizer.DAL
         /// <returns>A list of employees that matches the search.</returns>
         public ICollection<Employee> Search(string firstname, string lastname)
         {
-            throw new NotImplementedException();
+            List<Employee> results = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlSearchByName, conn);
+                    command.Parameters.AddWithValue("@firstname", firstname);
+                    command.Parameters.AddWithValue("@lastname", lastname);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee employee = new Employee
+                        {
+                            EmployeeId = Convert.ToInt32(reader["employee_id"]),
+                            DepartmentId = Convert.ToInt32(reader["employee_id"]),
+                            FirstName = Convert.ToString(reader["first_name"]),
+                            LastName = Convert.ToString(reader["last_name"]),
+                            JobTitle = Convert.ToString(reader["job_title"]),
+                            BirthDate = Convert.ToDateTime(reader["birth_date"]),
+                            HireDate = Convert.ToDateTime(reader["hire_date"])
+                        };
+
+                        results.Add(employee);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Could not search for employee: " + ex.Message);
+            }
+
+            return results;
         }
 
         /// <summary>
@@ -42,7 +119,41 @@ namespace ProjectOrganizer.DAL
         /// <returns></returns>
         public ICollection<Employee> GetEmployeesWithoutProjects()
         {
-            throw new NotImplementedException();
+            List<Employee> results = new List<Employee>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(this.connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand command = new SqlCommand(SqlSearchForNull, conn);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Employee employee = new Employee
+                        {
+                            EmployeeId = Convert.ToInt32(reader["employee_id"]),
+                            DepartmentId = Convert.ToInt32(reader["employee_id"]),
+                            FirstName = Convert.ToString(reader["first_name"]),
+                            LastName = Convert.ToString(reader["last_name"]),
+                            JobTitle = Convert.ToString(reader["job_title"]),
+                            BirthDate = Convert.ToDateTime(reader["birth_date"]),
+                            HireDate = Convert.ToDateTime(reader["hire_date"])
+                        };
+
+                        results.Add(employee);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Could not query the database: " + ex.Message);
+            }
+
+            return results;
         }
 
     }
