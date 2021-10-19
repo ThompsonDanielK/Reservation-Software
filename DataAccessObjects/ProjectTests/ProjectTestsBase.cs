@@ -43,5 +43,17 @@ namespace ProjectTests
             }
         }
 
+        protected int GetRowCount(string table)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand($"SELECT COUNT(*) FROM {table}", conn);
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return count;
+            }
+        }
+
     }
 }
