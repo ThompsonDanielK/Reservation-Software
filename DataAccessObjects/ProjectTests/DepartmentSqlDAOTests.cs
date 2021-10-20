@@ -55,6 +55,7 @@ namespace ProjectTests
 
             // Assert
             Assert.IsTrue(result);
+            Assert.AreEqual(1, GetRowCount("department"));
         }
     }
 }
