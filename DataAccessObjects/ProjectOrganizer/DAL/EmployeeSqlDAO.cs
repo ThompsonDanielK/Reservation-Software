@@ -11,7 +11,7 @@ namespace ProjectOrganizer.DAL
 
         private const string SqlSelectAll = "SELECT * FROM dbo.employee";
 
-        private const string SqlSearchByName = "SELECT * FROM dbo.employee WHERE first_name = @firstname AND last_name = @lastname";
+        private const string SqlSearchByName = "SELECT * FROM dbo.employee WHERE first_name LIKE @firstname AND last_name LIKE @lastname";
 
         private const string SqlSearchForNull = "SELECT * FROM dbo.employee e LEFT JOIN dbo.project_employee pe ON pe.employee_id = e.employee_id WHERE pe.project_id IS NULL";
 
@@ -83,8 +83,8 @@ namespace ProjectOrganizer.DAL
                     conn.Open();
 
                     SqlCommand command = new SqlCommand(SqlSearchByName, conn);
-                    command.Parameters.AddWithValue("@firstname", firstname);
-                    command.Parameters.AddWithValue("@lastname", lastname);
+                    command.Parameters.AddWithValue("@firstname", firstname + "%");
+                    command.Parameters.AddWithValue("@lastname", lastname + "%");
 
                     SqlDataReader reader = command.ExecuteReader();
 
