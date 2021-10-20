@@ -51,5 +51,28 @@ namespace ProjectTests
             Assert.IsTrue(result);
             Assert.AreEqual(0, GetRowCount("dbo.project_employee"));
         }
+
+        [TestMethod]
+
+        public void CreateProject__Should_IncreaseCountBy1()
+        {
+            // Arrange
+            ProjectSqlDAO dao = new ProjectSqlDAO(ConnectionString);
+
+            Project project = new Project
+            {
+                Name = "New",
+                ProjectId = 1,
+                StartDate = Convert.ToDateTime("01/20/2021"),
+                EndDate = Convert.ToDateTime("12/15/2021")
+            };
+
+            // Act
+            int result = dao.CreateProject(project);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(2, GetRowCount("project"));
+        }
     }
 }
