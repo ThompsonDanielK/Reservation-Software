@@ -1,4 +1,5 @@
 ﻿using Capstone.DAL;
+using Capstone.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,8 +34,80 @@ namespace Capstone
 
         public void Run()
         {
-            Console.WriteLine("Reached the User Interface.");
-            Console.ReadLine();
+            bool quit = false;
+
+            while (!quit)
+            {
+                Console.WriteLine("What would you like to do?");
+                Console.WriteLine("1) List Venues");
+                Console.WriteLine("Q) Quit");
+
+                string input = Console.ReadLine();
+
+                switch (input)
+                {
+                    case "1":
+                        SelectVenueHelper(GetVenue());
+                        break;
+
+                    case ("Q"):
+                        quit = true;
+                        break;
+
+                    case ("q"):
+                        quit = true;
+                        break;
+                }
+            }
+        }
+        public ICollection<Venue> GetVenue()
+        {
+            ICollection<Venue> venue = venueDAO.GetVenue();
+
+            if (venue.Count > 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Which Venue would you like to view?");
+
+                int indexPlusOne = 1;
+                foreach (Venue ven in venue)
+                {
+                    Console.WriteLine($"{indexPlusOne}) {ven.Name}");
+                    indexPlusOne++;
+                }
+
+                Console.WriteLine("R) Return to Previous Screen");
+            }
+            else
+            {
+                Console.WriteLine("**** NO RESULTS ****");
+            }
+
+            return venue;
+        }
+
+        public void SelectVenueHelper(ICollection<Venue> venue)
+        {
+            while (true)
+            {
+                string input = Console.ReadLine();
+
+                if (input.ToUpper() == "R")
+                {
+                    return;
+                }
+                else if (Convert.ToInt32(input) > venue.Count)
+                {
+                    Console.WriteLine("That is not a valid selection");
+                }
+
+                Venue ven = venueDAO.SelectVenue(Convert.ToInt32(input));
+
+                Console.WriteLine(ven.Name);
+                Console.WriteLine("Location: " + venueDAO.GetLocation(ven));
+                    
+            }
+
         }
     }
 }
