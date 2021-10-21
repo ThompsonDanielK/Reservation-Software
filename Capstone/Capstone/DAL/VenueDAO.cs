@@ -18,8 +18,8 @@ namespace Capstone.DAL
             "c.name AS cityname, s.abbreviation AS state, ca.name AS categoryname " +
             "FROM venue v INNER JOIN city c ON v.city_id = c.id " +
             "INNER JOIN state s ON s.abbreviation = c.state_abbreviation " +
-            "INNER JOIN category_venue cv ON cv.venue_id = v.id " +
-            "INNER JOIN category ca ON ca.id = cv.category_id " +
+            "FULL JOIN category_venue cv ON cv.venue_id = v.id " +
+            "FULL JOIN category ca ON ca.id = cv.category_id " +
             "ORDER BY v.name";
 
 
@@ -47,7 +47,7 @@ namespace Capstone.DAL
                         bool skip = false;
                         foreach (Venue venue in results)
                         {
-                            if (venue.Id == (Convert.ToInt32(reader["id"])))
+                            if (venue.Name == (Convert.ToString(reader["name"])))
                             {                              
                                 venue.Category = venue.Category + ", " + Convert.ToString(reader["categoryname"]);
                                 skip = true;
