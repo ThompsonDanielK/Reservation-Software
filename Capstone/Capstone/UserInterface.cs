@@ -103,10 +103,18 @@ namespace Capstone
 
                 Venue ven = venueDAO.SelectVenue(Convert.ToInt32(input));
 
+                Console.WriteLine();
                 Console.WriteLine(ven.Name);
                 Console.WriteLine("Location: " + ven.City + ", " + ven.State);
                 Console.WriteLine("Categories: " + ven.Category);
-                    
+                Console.WriteLine();
+                Console.WriteLine(ven.Description);
+                Console.WriteLine();
+                Console.WriteLine("What would you like to do next?");
+                Console.WriteLine("1) View Spaces");
+                Console.WriteLine("2) Search for Reservation");
+                Console.WriteLine("3) Return to Previous Screen");
+
             }
 
         }
