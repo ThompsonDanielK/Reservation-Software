@@ -20,9 +20,5 @@ namespace Capstone.Models
 
         public string Category { get; set; }
 
-        public int GetId()
-        {
-            return Id;
-        }
     }
 }
