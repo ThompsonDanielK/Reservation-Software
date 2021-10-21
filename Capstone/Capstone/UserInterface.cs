@@ -104,7 +104,8 @@ namespace Capstone
                 Venue ven = venueDAO.SelectVenue(Convert.ToInt32(input));
 
                 Console.WriteLine(ven.Name);
-                Console.WriteLine("Location: " + venueDAO.GetLocation(ven));
+                Console.WriteLine("Location: " + ven.City + ", " + ven.State);
+                Console.WriteLine("Categories: " + ven.Category);
                     
             }
 

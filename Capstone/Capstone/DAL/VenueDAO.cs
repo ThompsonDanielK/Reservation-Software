@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 
 namespace Capstone.DAL
@@ -13,11 +14,14 @@ namespace Capstone.DAL
     {
         private readonly string connectionString;
 
-        private const string SqlSelectAll = "SELECT * FROM dbo.venue ORDER BY name";
+        private const string SqlSelectAll = "SELECT v.name, v.id, v.city_id, v.description, " +
+            "c.name AS cityname, s.abbreviation AS state, ca.name AS categoryname " +
+            "FROM venue v INNER JOIN city c ON v.city_id = c.id " +
+            "INNER JOIN state s ON s.abbreviation = c.state_abbreviation " +
+            "INNER JOIN category_venue cv ON cv.venue_id = v.id " +
+            "INNER JOIN category ca ON ca.id = cv.category_id " +
+            "ORDER BY v.name";
 
-        private const string SqlGetLocation = "Select c.name + ', ' + s.abbreviation AS citystate FROM city c " +
-            "INNER JOIN venue v ON v.id = c.id INNER JOIN state s ON s.abbreviation = c.state_abbreviation " +
-            "WHERE v.city_id = @cityid AND v.id = @venueId";
 
         public VenueDAO(string connectionString)
         {
@@ -40,18 +44,38 @@ namespace Capstone.DAL
 
                     while (reader.Read())
                     {
-                        Venue venue = new Venue
+                        bool skip = false;
+                        foreach (Venue venue in results)
                         {
-                            Id = Convert.ToInt32(reader["id"]),
-                            Name = Convert.ToString(reader["name"]),
-                            CityId = Convert.ToInt32(reader["city_id"]),
-                            Description = Convert.ToString(reader["description"])
-                        };
+                            if (venue.Id == (Convert.ToInt32(reader["id"])))
+                            {                              
+                                venue.Category = venue.Category + ", " + Convert.ToString(reader["categoryname"]);
+                                skip = true;
+                            }
+                            else
+                            {
+                                skip = false;
+                            }
+                        }
+                         if (!skip)   
+                            {
+                                Venue newVenue = new Venue
+                                {
+                                    Id = Convert.ToInt32(reader["id"]),
+                                    Name = Convert.ToString(reader["name"]),
+                                    CityId = Convert.ToInt32(reader["city_id"]),
+                                    Description = Convert.ToString(reader["description"]),
+                                    City = Convert.ToString(reader["cityname"]),
+                                    State = Convert.ToString(reader["state"]),
+                                    Category = Convert.ToString(reader["categoryname"])
+                                };
+                                results.Add(newVenue);
+                            }
 
-                        results.Add(venue);
                     }
                 }
             }
+
             catch (SqlException ex)
             {
                 Console.WriteLine("Could not query the database: " + ex.Message);
@@ -76,15 +100,25 @@ namespace Capstone.DAL
 
                     while (reader.Read())
                     {
-                        Venue venue = new Venue
+                        if (results.Contains(reader["id"]))
                         {
-                            Id = Convert.ToInt32(reader["id"]),
-                            Name = Convert.ToString(reader["name"]),
-                            CityId = Convert.ToInt32(reader["city_id"]),
-                            Description = Convert.ToString(reader["description"])
-                        };
-
-                        results.Add(venue);
+                            int index = results.FindLastIndex((Predicate<Venue>)reader["id"]);
+                            results[index].Category += ", " + Convert.ToString(reader["categoryname"]);
+                        }
+                        else
+                        {
+                            Venue venue = new Venue
+                            {
+                                Id = Convert.ToInt32(reader["id"]),
+                                Name = Convert.ToString(reader["name"]),
+                                CityId = Convert.ToInt32(reader["city_id"]),
+                                Description = Convert.ToString(reader["description"]),
+                                City = Convert.ToString(reader["cityname"]),
+                                State = Convert.ToString(reader["state"]),
+                                Category = Convert.ToString(reader["categoryname"])
+                            };
+                            results.Add(venue);
+                        }
                     }
                 }
             }
@@ -94,30 +128,6 @@ namespace Capstone.DAL
             }
 
             return results[input - 1];
-        }
-
-        public string GetLocation(Venue ven)
-        {
-            string result = "";
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(this.connectionString))
-                {
-                    conn.Open();
-
-                    SqlCommand command = new SqlCommand(SqlGetLocation, conn);
-                    command.Parameters.AddWithValue("@cityId", ven.CityId);
-                    command.Parameters.AddWithValue("@venueId", ven.Id);
-
-                    result = (string)command.ExecuteScalar();
-                    return result;
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("Could not query the database: " + ex.Message);
-            }
-            return result;
         }
     }
 }
