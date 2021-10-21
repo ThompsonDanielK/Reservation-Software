@@ -47,7 +47,7 @@ namespace Capstone
                 switch (input)
                 {
                     case "1":
-                        SelectVenueHelper(GetVenue());
+                        SelectVenueHelper(GetVenueHelper());
                         break;
 
                     case ("Q"):
@@ -58,9 +58,11 @@ namespace Capstone
                         quit = true;
                         break;
                 }
+
+                VenueDetails();
             }
         }
-        public ICollection<Venue> GetVenue()
+        public ICollection<Venue> GetVenueHelper()
         {
             ICollection<Venue> venue = venueDAO.GetVenue();
 
@@ -109,14 +111,46 @@ namespace Capstone
                 Console.WriteLine("Categories: " + ven.Category);
                 Console.WriteLine();
                 Console.WriteLine(ven.Description);
-                Console.WriteLine();
-                Console.WriteLine("What would you like to do next?");
-                Console.WriteLine("1) View Spaces");
-                Console.WriteLine("2) Search for Reservation");
-                Console.WriteLine("3) Return to Previous Screen");
+                break;
 
             }
 
+        }
+
+
+        public void VenueDetails()
+        {
+            Console.WriteLine();
+            Console.WriteLine("What would you like to do next?");
+            Console.WriteLine("1) View Spaces");
+            Console.WriteLine("2) Search for Reservation");
+            Console.WriteLine("R) Return to Previous Screen");
+
+            string input = Console.ReadLine();
+
+            while (true)
+            {
+                switch (input)
+                {
+                    case "1":
+                        //View Spaces
+                        break;
+
+                    case "2":
+                        //Search for Reservation
+                        break;
+
+                    case "r":
+                        SelectVenueHelper(GetVenueHelper());
+                        VenueDetails();
+                        break;
+
+                    case "R":
+                        SelectVenueHelper(GetVenueHelper());
+                        VenueDetails();
+                        break;
+                }
+            }
         }
     }
 }
