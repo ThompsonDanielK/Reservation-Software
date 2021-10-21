@@ -100,14 +100,22 @@ namespace Capstone.DAL
 
                     while (reader.Read())
                     {
-                        if (results.Contains(reader["id"]))
+                        bool skip = false;
+                        foreach (Venue venue in results)
                         {
-                            int index = results.FindLastIndex((Predicate<Venue>)reader["id"]);
-                            results[index].Category += ", " + Convert.ToString(reader["categoryname"]);
+                            if (venue.Name == (Convert.ToString(reader["name"])))
+                            {
+                                venue.Category = venue.Category + ", " + Convert.ToString(reader["categoryname"]);
+                                skip = true;
+                            }
+                            else
+                            {
+                                skip = false;
+                            }
                         }
-                        else
+                        if (!skip)
                         {
-                            Venue venue = new Venue
+                            Venue newVenue = new Venue
                             {
                                 Id = Convert.ToInt32(reader["id"]),
                                 Name = Convert.ToString(reader["name"]),
@@ -117,8 +125,9 @@ namespace Capstone.DAL
                                 State = Convert.ToString(reader["state"]),
                                 Category = Convert.ToString(reader["categoryname"])
                             };
-                            results.Add(venue);
+                            results.Add(newVenue);
                         }
+
                     }
                 }
             }
