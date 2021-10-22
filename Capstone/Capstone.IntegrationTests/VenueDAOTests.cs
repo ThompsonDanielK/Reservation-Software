@@ -24,5 +24,15 @@ namespace Capstone.IntegrationTests
             Assert.AreEqual(1, result.Count);
 
         }
+
+        [TestMethod]
+        public void SelectVenue_()
+        {
+            // Arrange
+
+            // Act
+
+            // Assert
+        }
     }
 }
