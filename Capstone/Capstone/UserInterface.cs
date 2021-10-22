@@ -28,11 +28,14 @@ namespace Capstone
 
         private readonly SpaceDAO spaceDAO;
 
+        private readonly ReservationDAO reservationDAO;
+
         public UserInterface(string connectionString)
         {
             this.connectionString = connectionString;
             venueDAO = new VenueDAO(connectionString);
             spaceDAO = new SpaceDAO(connectionString);
+            reservationDAO = new ReservationDAO(connectionString);
         }
 
         public void Run()
@@ -59,12 +62,13 @@ namespace Capstone
                             while (loopOnOff2)
                             {
                                 Venue ven = SelectVenueHelper(venue, input2);
+                                bool loopOnOff3 = true;
 
                                 if (ven.Id != -1 && ven.Id != -2)
                                 {
-                                    while (true)
+                                    while (loopOnOff3)
                                     {
-                                        VenueDetails(ven);
+                                        loopOnOff3 = VenueDetails(ven);
                                         break;
                                     }
                                 }
@@ -117,7 +121,7 @@ namespace Capstone
         }
 
         public Venue SelectVenueHelper(ICollection<Venue> venue, string input)
-        {           
+        {
             Venue ven = new Venue();
 
             if (input.ToUpper() == "R")
@@ -146,14 +150,13 @@ namespace Capstone
         }
 
 
-        public void VenueDetails(Venue venue)
+        public bool VenueDetails(Venue venue)
         {
             if (venue.Id != -1)
             {
                 Console.WriteLine();
                 Console.WriteLine("What would you like to do next?");
-                Console.WriteLine("1) View Spaces");
-                Console.WriteLine("2) Search for Reservation");
+                Console.WriteLine("1) View Spaces");                
                 Console.WriteLine("R) Return to Previous Screen");
 
                 string input = Console.ReadLine();
@@ -167,24 +170,20 @@ namespace Capstone
                             //View Spaces
                             ICollection<Space> spaceCollection = spaceDAO.GetSpaces(venue);
                             GetSpaceHelper(spaceCollection, venue);
-                            loopOnOff = ListVenueSpaceMenu();
-                            break;
-
-                        case "2":
-                            //Search for Reservation
-                            break;
+                            loopOnOff = ListVenueSpaceMenu(venue);
+                            break;                        
 
                         case "r":
                             loopOnOff = false;
-                            break;
+                            return false;
 
                         case "R":
                             loopOnOff = false;
-                            break;
+                            return false;
                     }
                 }
             }
-            return;
+            return true;
         }
 
         public void GetSpaceHelper(ICollection<Space> spaceCollection, Venue venue)
@@ -209,7 +208,7 @@ namespace Capstone
             }
         }
 
-        public bool ListVenueSpaceMenu()
+        public bool ListVenueSpaceMenu(Venue venue)
         {
             Console.WriteLine();
             Console.WriteLine("What would you like to do next?");
@@ -222,6 +221,7 @@ namespace Capstone
             {
                 case "1":
                     //Reserve a space
+                    ReserveASpaceMenu(venue);
                     break;
                 case "r":
                     return false;
@@ -229,6 +229,92 @@ namespace Capstone
                     return false;
             }
             return true;
+        }
+
+        public void ReserveASpaceMenu(Venue venue)
+        {
+            bool loopOnOff = true;
+
+            while (loopOnOff)
+            {
+                Console.WriteLine();
+                Console.Write("When do you need the space? ");
+                DateTime date = Convert.ToDateTime(Console.ReadLine());
+                Console.Write("How many days will you need the space? ");
+                int howManyDays = Convert.ToInt32(Console.ReadLine());
+                Console.Write("How many people will be in attendance? ");
+                int attendees = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine();
+                Console.WriteLine("The following spaces are available based on your needs:");
+                Console.WriteLine();
+
+                ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
+
+                if (reservationCollection.Count < 1)
+                {
+                    Console.WriteLine("No reservations available, would you like to try again? (Y/N)");
+                    string input = Console.ReadLine().ToUpper();
+
+                    if (input == "N")
+                    {
+                        return;
+                    }
+                    
+                }
+                else
+                {
+                    loopOnOff = false;
+                    Console.WriteLine("Space #    Name            Daily Rate      Max Occup.      Accessible?      Total Cost");
+                    foreach (Reservation reservation in reservationCollection)
+                    {
+                        Console.WriteLine($"{reservation.SpaceId}    {reservation.SpaceName}    {reservation.DailyCost.ToString("C")}   {reservation.MaxOccup}    {reservation.Accessible}    {reservation.TotalCost.ToString("C")}");
+
+                    }
+
+                    Console.WriteLine();
+                    Console.Write("Which space would you like to reserve? (enter 0 to cancel)? ");
+                    int spaceNumber = Convert.ToInt32(Console.ReadLine());
+                    if (spaceNumber == 0)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        MakeReservationHelper(spaceNumber, reservationCollection, venue);
+                    }
+                }
+            }
+        }
+
+        public void MakeReservationHelper(int spaceNumber, ICollection<Reservation> reservationCollection, Venue venue)
+        {
+            Reservation reservation = new Reservation();
+
+            foreach (Reservation reservation1 in reservationCollection)
+            {
+                if (reservation1.SpaceId == spaceNumber)
+                {
+                    reservation = reservation1;
+                }
+
+            }
+
+            Console.Write("Who is this reservation for? ");
+            string name = Console.ReadLine();
+            Console.WriteLine();
+
+            int confirmationNumber = reservationDAO.MakeReservation(reservation, name);
+
+            Console.WriteLine("Thanks for submitting your reservation! The details for your event are listed below:");
+            Console.WriteLine();
+            Console.WriteLine("Confirmation #: " + confirmationNumber);
+            Console.WriteLine("Venue: " + venue.Name);
+            Console.WriteLine("Space: " + reservation.SpaceName);
+            Console.WriteLine("Reserved For: " + name);
+            Console.WriteLine("Attendees: " + reservation.NumberOfAttendees);
+            Console.WriteLine("Arrival Date: " + reservation.StartDate.ToString("MM/dd/yyyy"));
+            Console.WriteLine("Depart Date: " + reservation.EndDate.ToString("MM/dd/yyyy"));
+            Console.WriteLine("Total Cost: " + reservation.TotalCost.ToString("C"));
         }
     }
 }
