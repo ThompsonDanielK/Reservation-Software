@@ -48,43 +48,50 @@ namespace Capstone
                 Console.WriteLine("1) List Venues");
                 Console.WriteLine("Q) Quit");
 
-                string input = Console.ReadLine();
-
-                switch (input)
+                try
                 {
-                    case "1":
-                        bool loopOnOff = true;
-                        bool loopOnOff2 = true;
-                        while (loopOnOff)
-                        {
-                            ICollection<Venue> venue = GetVenueHelper();
-                            string input2 = Console.ReadLine();
-                            Venue ven = SelectVenueHelper(venue, input2);
+                    string input = Console.ReadLine();
 
-                            if (ven.Id != -1 && ven.Id != -2)
+                    switch (input)
+                    {
+                        case "1":
+                            bool loopOnOff = true;
+                            bool loopOnOff2 = true;
+                            while (loopOnOff)
                             {
-                                while (loopOnOff2)
+                                ICollection<Venue> venue = GetVenueHelper();
+                                string input2 = Console.ReadLine();
+                                Venue ven = SelectVenueHelper(venue, input2);
+
+                                if (ven.Id != -1 && ven.Id != -2)
                                 {
-                                    loopOnOff2 = VenueDetails(ven);
-                                    break;
+                                    while (loopOnOff2)
+                                    {
+                                        loopOnOff2 = VenueDetails(ven);
+                                        break;
+                                    }
                                 }
-                            }
-                            else if (ven.Id == -1)
-                            {
-                                loopOnOff = false;
+                                else if (ven.Id == -1)
+                                {
+                                    loopOnOff = false;
+
+                                }
 
                             }
+                            break;
 
-                        }
-                        break;
+                        case ("Q"):
+                            quit = true;
+                            break;
 
-                    case ("Q"):
-                        quit = true;
-                        break;
-
-                    case ("q"):
-                        quit = true;
-                        break;
+                        case ("q"):
+                            quit = true;
+                            break;
+                    }
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine("Invalid selection: " + ex.Message);
                 }
 
 
@@ -119,18 +126,23 @@ namespace Capstone
         public Venue SelectVenueHelper(ICollection<Venue> venue, string input)
         {
             Venue ven = new Venue();
-
-            if (input.ToUpper() == "R")
+            try
             {
-                return ven;
+                if (input.ToUpper() == "R")
+                {
+                    return ven;
+                }
+                else if (Convert.ToInt32(input) > venue.Count)
+                {
+                    Console.WriteLine("That is not a valid selection");
+                }
+
+                ven = venueDAO.SelectVenue(Convert.ToInt32(input));
             }
-            else if (Convert.ToInt32(input) > venue.Count)
+            catch (FormatException ex)
             {
-                Console.WriteLine("That is not a valid selection");
+                Console.WriteLine("Invalid selection: " + ex.Message);
             }
-
-            ven = venueDAO.SelectVenue(Convert.ToInt32(input));
-
             if (ven.Id != -1)
             {
                 Console.WriteLine();
@@ -235,7 +247,10 @@ namespace Capstone
             {
                 DateTime date;
                 int howManyDays, attendees;
+
                 ReserveASpaceMenuText(out date, out howManyDays, out attendees);
+
+
 
                 ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
 
@@ -277,6 +292,7 @@ namespace Capstone
 
         private static void ReserveASpaceMenuText(out DateTime date, out int howManyDays, out int attendees)
         {
+
             Console.WriteLine();
             Console.Write("When do you need the space? ");
             date = Convert.ToDateTime(Console.ReadLine());
@@ -287,6 +303,7 @@ namespace Capstone
             Console.WriteLine();
             Console.WriteLine("The following spaces are available based on your needs:");
             Console.WriteLine();
+
         }
 
         public void MakeReservationHelper(int spaceNumber, ICollection<Reservation> reservationCollection, Venue venue)

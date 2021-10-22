@@ -88,53 +88,8 @@ namespace Capstone.DAL
         {
             List<Venue> results = new List<Venue>();
 
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(this.connectionString))
-                {
-                    conn.Open();
+            results = (List<Venue>)GetVenue();
 
-                    SqlCommand command = new SqlCommand(SqlSelectAll, conn);
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        bool skip = false;
-                        foreach (Venue venue in results)
-                        {
-                            if (venue.Name == (Convert.ToString(reader["name"])))
-                            {
-                                venue.Category = venue.Category + ", " + Convert.ToString(reader["categoryname"]);
-                                skip = true;
-                            }
-                            else
-                            {
-                                skip = false;
-                            }
-                        }
-                        if (!skip)
-                        {
-                            Venue newVenue = new Venue
-                            {
-                                Id = Convert.ToInt32(reader["id"]),
-                                Name = Convert.ToString(reader["name"]),
-                                CityId = Convert.ToInt32(reader["city_id"]),
-                                Description = Convert.ToString(reader["description"]),
-                                City = Convert.ToString(reader["cityname"]),
-                                State = Convert.ToString(reader["state"]),
-                                Category = Convert.ToString(reader["categoryname"])
-                            };
-                            results.Add(newVenue);
-                        }
-
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("Could not query the database: " + ex.Message);
-            }
             try
             {
                 return results[input - 1];
