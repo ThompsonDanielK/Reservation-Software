@@ -48,7 +48,7 @@ namespace Capstone.DAL
                         foreach (Venue venue in results)
                         {
                             if (venue.Name == (Convert.ToString(reader["name"])))
-                            {                              
+                            {
                                 venue.Category = venue.Category + ", " + Convert.ToString(reader["categoryname"]);
                                 skip = true;
                             }
@@ -57,20 +57,20 @@ namespace Capstone.DAL
                                 skip = false;
                             }
                         }
-                         if (!skip)   
+                        if (!skip)
+                        {
+                            Venue newVenue = new Venue
                             {
-                                Venue newVenue = new Venue
-                                {
-                                    Id = Convert.ToInt32(reader["id"]),
-                                    Name = Convert.ToString(reader["name"]),
-                                    CityId = Convert.ToInt32(reader["city_id"]),
-                                    Description = Convert.ToString(reader["description"]),
-                                    City = Convert.ToString(reader["cityname"]),
-                                    State = Convert.ToString(reader["state"]),
-                                    Category = Convert.ToString(reader["categoryname"])
-                                };
-                                results.Add(newVenue);
-                            }
+                                Id = Convert.ToInt32(reader["id"]),
+                                Name = Convert.ToString(reader["name"]),
+                                CityId = Convert.ToInt32(reader["city_id"]),
+                                Description = Convert.ToString(reader["description"]),
+                                City = Convert.ToString(reader["cityname"]),
+                                State = Convert.ToString(reader["state"]),
+                                Category = Convert.ToString(reader["categoryname"])
+                            };
+                            results.Add(newVenue);
+                        }
 
                     }
                 }
@@ -135,8 +135,16 @@ namespace Capstone.DAL
             {
                 Console.WriteLine("Could not query the database: " + ex.Message);
             }
-
-            return results[input - 1];
+            try
+            {
+                return results[input - 1];
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.WriteLine("Please select a listed value: " + ex.Message);
+            }
+            Venue emptyVenue = new Venue();
+            return emptyVenue;
         }
     }
 }

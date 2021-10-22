@@ -26,10 +26,13 @@ namespace Capstone
 
         private readonly VenueDAO venueDAO;
 
+        private readonly SpaceDAO spaceDAO;
+
         public UserInterface(string connectionString)
         {
             this.connectionString = connectionString;
             venueDAO = new VenueDAO(connectionString);
+            spaceDAO = new SpaceDAO(connectionString);
         }
 
         public void Run()
@@ -47,7 +50,25 @@ namespace Capstone
                 switch (input)
                 {
                     case "1":
-                        SelectVenueHelper(GetVenueHelper());
+                        bool loopOnOff = true;
+                        while (loopOnOff)
+                        {
+                            ICollection<Venue> venue = GetVenueHelper();
+                            Venue ven = SelectVenueHelper(venue);
+
+                            if (ven.Name != "" && ven.Name != "A")
+                            {
+                                while (true)
+                                {
+                                    VenueDetails(ven);
+                                    break;
+                                }
+                            }
+                            else if (ven.Name == "")
+                            {
+                                loopOnOff = false;
+                            }
+                        }
                         break;
 
                     case ("Q"):
@@ -59,7 +80,7 @@ namespace Capstone
                         break;
                 }
 
-                VenueDetails();
+
             }
         }
         public ICollection<Venue> GetVenueHelper()
@@ -88,69 +109,76 @@ namespace Capstone
             return venue;
         }
 
-        public void SelectVenueHelper(ICollection<Venue> venue)
+        public Venue SelectVenueHelper(ICollection<Venue> venue)
         {
-            while (true)
+
+            string input = Console.ReadLine();
+
+            Venue ven = new Venue();
+
+            if (input.ToUpper() == "R")
             {
-                string input = Console.ReadLine();
+                return ven;
+            }
+            else if (Convert.ToInt32(input) > venue.Count)
+            {
+                Console.WriteLine("That is not a valid selection");
+            }
 
-                if (input.ToUpper() == "R")
-                {
-                    return;
-                }
-                else if (Convert.ToInt32(input) > venue.Count)
-                {
-                    Console.WriteLine("That is not a valid selection");
-                }
+            ven = venueDAO.SelectVenue(Convert.ToInt32(input));
 
-                Venue ven = venueDAO.SelectVenue(Convert.ToInt32(input));
-
+            if (ven.Name != "")
+            {
                 Console.WriteLine();
                 Console.WriteLine(ven.Name);
                 Console.WriteLine("Location: " + ven.City + ", " + ven.State);
                 Console.WriteLine("Categories: " + ven.Category);
                 Console.WriteLine();
                 Console.WriteLine(ven.Description);
-                break;
-
+                return ven;
             }
-
+            ven.Name = "A";
+            return ven;
         }
 
 
-        public void VenueDetails()
+        public void VenueDetails(Venue venue)
         {
-            Console.WriteLine();
-            Console.WriteLine("What would you like to do next?");
-            Console.WriteLine("1) View Spaces");
-            Console.WriteLine("2) Search for Reservation");
-            Console.WriteLine("R) Return to Previous Screen");
-
-            string input = Console.ReadLine();
-
-            while (true)
+            if (venue.Name != "")
             {
-                switch (input)
+                Console.WriteLine();
+                Console.WriteLine("What would you like to do next?");
+                Console.WriteLine("1) View Spaces");
+                Console.WriteLine("2) Search for Reservation");
+                Console.WriteLine("R) Return to Previous Screen");
+
+                string input = Console.ReadLine();
+                bool loopOnOff = true;
+
+                while (loopOnOff)
                 {
-                    case "1":
-                        //View Spaces
-                        break;
+                    switch (input)
+                    {
+                        case "1":
+                            //View Spaces
+                            ICollection<Space> space = spaceDAO.GetSpaces(venue);
+                            break;
 
-                    case "2":
-                        //Search for Reservation
-                        break;
+                        case "2":
+                            //Search for Reservation
+                            break;
 
-                    case "r":
-                        SelectVenueHelper(GetVenueHelper());
-                        VenueDetails();
-                        break;
+                        case "r":
+                            loopOnOff = false;
+                            break;
 
-                    case "R":
-                        SelectVenueHelper(GetVenueHelper());
-                        VenueDetails();
-                        break;
+                        case "R":
+                            loopOnOff = false;
+                            break;
+                    }
                 }
             }
+            return;
         }
     }
 }
