@@ -10,7 +10,7 @@ namespace Capstone.DAL
     {
         private readonly string connectionString;
 
-        private const string SqlGetSpace = "";
+        private const string SqlGetSpace = "SELECT * FROM space s INNER JOIN venue v ON v.id = s.venue_id WHERE v.id = @venueid";
 
         public SpaceDAO(string connectionString)
         {
@@ -28,13 +28,40 @@ namespace Capstone.DAL
                     conn.Open();
 
                     SqlCommand command = new SqlCommand(SqlGetSpace, conn);
+                    command.Parameters.AddWithValue("@venueid", ven.Id);
 
                     SqlDataReader reader = command.ExecuteReader();
 
                     while (reader.Read())
                     {
-                        
+                        Space space = new Space()
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            Name = Convert.ToString(reader["name"]),
+                            MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]),
+                            WheelchairAccessible = Convert.ToBoolean(reader["is_accessible"]),
+                            DailyRate = Convert.ToDecimal(reader["daily_rate"])                                                   
+                        };
 
+                        if (!DBNull.Value.Equals(reader["open_from"]))
+                        {
+                            space.OpeningMonth = Convert.ToInt32(reader["open_from"]);
+                        }
+                        else
+                        {
+                            space.OpeningMonth = 0;
+                        }
+
+                        if (!DBNull.Value.Equals(reader["open_to"]))
+                        {
+                            space.ClosingMonth = Convert.ToInt32(reader["open_to"]);
+                        }
+                        else
+                        {
+                            space.ClosingMonth = 0;
+                        }
+
+                        results.Add(space);
                     }
                 }
             }

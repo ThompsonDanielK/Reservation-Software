@@ -10,9 +10,9 @@ namespace Capstone.Models
 
         public string Name { get; set; }
 
-        public string OpeningMonth { get; set; }
+        public int OpeningMonth { get; set; }
 
-        public string ClosingMonth { get; set; }
+        public int ClosingMonth { get; set; }
 
         public int MaxOccupancy { get; set; }
 

@@ -51,23 +51,30 @@ namespace Capstone
                 {
                     case "1":
                         bool loopOnOff = true;
+                        bool loopOnOff2 = true;
                         while (loopOnOff)
                         {
                             ICollection<Venue> venue = GetVenueHelper();
-                            Venue ven = SelectVenueHelper(venue);
-
-                            if (ven.Name != "" && ven.Name != "A")
+                            string input2 = Console.ReadLine();
+                            while (loopOnOff2)
                             {
-                                while (true)
+                                Venue ven = SelectVenueHelper(venue, input2);
+
+                                if (ven.Id != -1 && ven.Id != -2)
                                 {
-                                    VenueDetails(ven);
-                                    break;
+                                    while (true)
+                                    {
+                                        VenueDetails(ven);
+                                        break;
+                                    }
+                                }
+                                else if (ven.Id == -1)
+                                {
+                                    loopOnOff = false;
+                                    loopOnOff2 = false;
                                 }
                             }
-                            else if (ven.Name == "")
-                            {
-                                loopOnOff = false;
-                            }
+
                         }
                         break;
 
@@ -109,11 +116,8 @@ namespace Capstone
             return venue;
         }
 
-        public Venue SelectVenueHelper(ICollection<Venue> venue)
-        {
-
-            string input = Console.ReadLine();
-
+        public Venue SelectVenueHelper(ICollection<Venue> venue, string input)
+        {           
             Venue ven = new Venue();
 
             if (input.ToUpper() == "R")
@@ -127,7 +131,7 @@ namespace Capstone
 
             ven = venueDAO.SelectVenue(Convert.ToInt32(input));
 
-            if (ven.Name != "")
+            if (ven.Id != -1)
             {
                 Console.WriteLine();
                 Console.WriteLine(ven.Name);
@@ -137,14 +141,14 @@ namespace Capstone
                 Console.WriteLine(ven.Description);
                 return ven;
             }
-            ven.Name = "A";
+            ven.Id = -2;
             return ven;
         }
 
 
         public void VenueDetails(Venue venue)
         {
-            if (venue.Name != "")
+            if (venue.Id != -1)
             {
                 Console.WriteLine();
                 Console.WriteLine("What would you like to do next?");
@@ -161,7 +165,9 @@ namespace Capstone
                     {
                         case "1":
                             //View Spaces
-                            ICollection<Space> space = spaceDAO.GetSpaces(venue);
+                            ICollection<Space> spaceCollection = spaceDAO.GetSpaces(venue);
+                            GetSpaceHelper(spaceCollection, venue);
+                            loopOnOff = ListVenueSpaceMenu();
                             break;
 
                         case "2":
@@ -179,6 +185,50 @@ namespace Capstone
                 }
             }
             return;
+        }
+
+        public void GetSpaceHelper(ICollection<Space> spaceCollection, Venue venue)
+        {
+
+            if (spaceCollection.Count > 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine(venue.Name);
+                Console.WriteLine();
+                Console.WriteLine("      Name          Open   Close   Daily Rate   Max. Occupancy");
+
+                foreach (Space space in spaceCollection)
+                {
+                    Console.WriteLine($"#{space.Id}   {space.Name}   {space.OpeningMonth}   {space.ClosingMonth}   {space.DailyRate.ToString("C")}   {space.MaxOccupancy}");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("**** NO RESULTS ****");
+            }
+        }
+
+        public bool ListVenueSpaceMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine("What would you like to do next?");
+            Console.WriteLine("1) Reserve a Space");
+            Console.WriteLine("R) Return to Previous Screen");
+
+            string input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    //Reserve a space
+                    break;
+                case "r":
+                    return false;
+                case "R":
+                    return false;
+            }
+            return true;
         }
     }
 }
