@@ -59,24 +59,20 @@ namespace Capstone
                         {
                             ICollection<Venue> venue = GetVenueHelper();
                             string input2 = Console.ReadLine();
-                            while (loopOnOff2)
-                            {
-                                Venue ven = SelectVenueHelper(venue, input2);
-                                bool loopOnOff3 = true;
+                            Venue ven = SelectVenueHelper(venue, input2);
 
-                                if (ven.Id != -1 && ven.Id != -2)
+                            if (ven.Id != -1 && ven.Id != -2)
+                            {
+                                while (loopOnOff2)
                                 {
-                                    while (loopOnOff3)
-                                    {
-                                        loopOnOff3 = VenueDetails(ven);
-                                        break;
-                                    }
+                                    loopOnOff2 = VenueDetails(ven);
+                                    break;
                                 }
-                                else if (ven.Id == -1)
-                                {
-                                    loopOnOff = false;
-                                    loopOnOff2 = false;
-                                }
+                            }
+                            else if (ven.Id == -1)
+                            {
+                                loopOnOff = false;
+
                             }
 
                         }
@@ -156,7 +152,7 @@ namespace Capstone
             {
                 Console.WriteLine();
                 Console.WriteLine("What would you like to do next?");
-                Console.WriteLine("1) View Spaces");                
+                Console.WriteLine("1) View Spaces");
                 Console.WriteLine("R) Return to Previous Screen");
 
                 string input = Console.ReadLine();
@@ -171,7 +167,7 @@ namespace Capstone
                             ICollection<Space> spaceCollection = spaceDAO.GetSpaces(venue);
                             GetSpaceHelper(spaceCollection, venue);
                             loopOnOff = ListVenueSpaceMenu(venue);
-                            break;                        
+                            break;
 
                         case "r":
                             loopOnOff = false;
@@ -237,16 +233,9 @@ namespace Capstone
 
             while (loopOnOff)
             {
-                Console.WriteLine();
-                Console.Write("When do you need the space? ");
-                DateTime date = Convert.ToDateTime(Console.ReadLine());
-                Console.Write("How many days will you need the space? ");
-                int howManyDays = Convert.ToInt32(Console.ReadLine());
-                Console.Write("How many people will be in attendance? ");
-                int attendees = Convert.ToInt32(Console.ReadLine());
-                Console.WriteLine();
-                Console.WriteLine("The following spaces are available based on your needs:");
-                Console.WriteLine();
+                DateTime date;
+                int howManyDays, attendees;
+                ReserveASpaceMenuText(out date, out howManyDays, out attendees);
 
                 ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
 
@@ -259,7 +248,7 @@ namespace Capstone
                     {
                         return;
                     }
-                    
+
                 }
                 else
                 {
@@ -284,6 +273,20 @@ namespace Capstone
                     }
                 }
             }
+        }
+
+        private static void ReserveASpaceMenuText(out DateTime date, out int howManyDays, out int attendees)
+        {
+            Console.WriteLine();
+            Console.Write("When do you need the space? ");
+            date = Convert.ToDateTime(Console.ReadLine());
+            Console.Write("How many days will you need the space? ");
+            howManyDays = Convert.ToInt32(Console.ReadLine());
+            Console.Write("How many people will be in attendance? ");
+            attendees = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine();
+            Console.WriteLine("The following spaces are available based on your needs:");
+            Console.WriteLine();
         }
 
         public void MakeReservationHelper(int spaceNumber, ICollection<Reservation> reservationCollection, Venue venue)
