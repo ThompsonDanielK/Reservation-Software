@@ -16,7 +16,7 @@ namespace Capstone.IntegrationTests
             // Arrange
             SpaceDAO dao = new SpaceDAO(ConnectionString);
             VenueDAO venueDao = new VenueDAO(ConnectionString);
-            Venue venue = venueDao.SelectVenue(1);
+            Venue venue = venueDao.SelectVenue(1, venueDao.GetVenue());
 
             // Act
             ICollection<Space> result = dao.GetSpaces(venue);

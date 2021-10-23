@@ -44,6 +44,7 @@ namespace Capstone
 
             while (!quit)
             {
+                Console.Clear();
                 Console.WriteLine("What would you like to do?");
                 Console.WriteLine("1) List Venues");
                 Console.WriteLine("Q) Quit");
@@ -56,26 +57,36 @@ namespace Capstone
                     {
                         case "1":
                             bool loopOnOff = true;
-                            bool loopOnOff2 = true;
                             while (loopOnOff)
                             {
-                                ICollection<Venue> venue = GetVenueHelper();
-                                string input2 = Console.ReadLine();
-                                Venue ven = SelectVenueHelper(venue, input2);
 
-                                if (ven.Id != -1 && ven.Id != -2)
+                                List<Venue> venue = GetVenueHelper();
+                                string input2 = Console.ReadLine();
+
+
+                                bool loopOnOff2 = true;
+
+                                while (loopOnOff2)
                                 {
-                                    while (loopOnOff2)
+                                    Venue ven = SelectVenueHelper(venue, input2);
+
+                                    if (ven.Id != -1 && ven.Id != -2)
                                     {
+
+
                                         loopOnOff2 = VenueDetails(ven);
-                                        break;
+
+
+                                    }
+                                    else if (ven.Id == -1)
+                                    {
+                                        loopOnOff2 = false;
+
+                                        loopOnOff = false;
+
                                     }
                                 }
-                                else if (ven.Id == -1)
-                                {
-                                    loopOnOff = false;
 
-                                }
 
                             }
                             break;
@@ -97,13 +108,13 @@ namespace Capstone
 
             }
         }
-        public ICollection<Venue> GetVenueHelper()
+        public List<Venue> GetVenueHelper()
         {
-            ICollection<Venue> venue = venueDAO.GetVenue();
+            List<Venue> venue = venueDAO.GetVenue();
 
             if (venue.Count > 0)
             {
-                Console.WriteLine();
+                Console.Clear();
                 Console.WriteLine("Which Venue would you like to view?");
 
                 int indexPlusOne = 1;
@@ -123,7 +134,7 @@ namespace Capstone
             return venue;
         }
 
-        public Venue SelectVenueHelper(ICollection<Venue> venue, string input)
+        public Venue SelectVenueHelper(List<Venue> venue, string input)
         {
             Venue ven = new Venue();
             try
@@ -137,7 +148,7 @@ namespace Capstone
                     Console.WriteLine("That is not a valid selection");
                 }
 
-                ven = venueDAO.SelectVenue(Convert.ToInt32(input));
+                ven = venueDAO.SelectVenue(Convert.ToInt32(input), venue);
             }
             catch (FormatException ex)
             {
@@ -145,7 +156,7 @@ namespace Capstone
             }
             if (ven.Id != -1)
             {
-                Console.WriteLine();
+                Console.Clear();
                 Console.WriteLine(ven.Name);
                 Console.WriteLine("Location: " + ven.City + ", " + ven.State);
                 Console.WriteLine("Categories: " + ven.Category);
@@ -191,7 +202,7 @@ namespace Capstone
                     }
                 }
             }
-            return true;
+            return false;
         }
 
         public void GetSpaceHelper(ICollection<Space> spaceCollection, Venue venue)
@@ -199,14 +210,14 @@ namespace Capstone
 
             if (spaceCollection.Count > 0)
             {
-                Console.WriteLine();
+                Console.Clear();
                 Console.WriteLine(venue.Name);
                 Console.WriteLine();
-                Console.WriteLine($"{" ", -6}{"Name", -25}{"Open", -8}{"Close", -8}{"Daily Rate", -15}{"Max. Occupancy", -15}");
+                Console.WriteLine($"{" ",-6}{"Name",-25}{"Open",-8}{"Close",-8}{"Daily Rate",-15}{"Max. Occupancy",-15}");
 
                 foreach (Space space in spaceCollection)
                 {
-                    Console.WriteLine($"#{space.Id, -5}{space.Name, -25}{space.OpeningMonth, -8}{space.ClosingMonth, -8}{space.DailyRate.ToString("C"), -15}{space.MaxOccupancy, -15}");
+                    Console.WriteLine($"#{space.Id,-5}{space.Name,-25}{space.OpeningMonth,-8}{space.ClosingMonth,-8}{space.DailyRate.ToString("C"),-15}{space.MaxOccupancy,-15}");
                 }
 
             }
@@ -255,10 +266,6 @@ namespace Capstone
                     Console.Write("How many people will be in attendance? ");
                     int attendees = Convert.ToInt32(Console.ReadLine());
                     Console.WriteLine();
-                    Console.WriteLine("The following spaces are available based on your needs:");
-                    Console.WriteLine();
-
-
 
                     ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
 
@@ -275,11 +282,13 @@ namespace Capstone
                     }
                     else
                     {
-                        loopOnOff = false;                        
-                        Console.WriteLine(String.Format($"{"Space #", -10}{"Name", -25}{"Daily Rate", -15}{"Max Occup.", -15}{"Accessible?", -15}{"Total Cost", -15}"));
+                        loopOnOff = false;
+                        Console.Clear();
+                        Console.WriteLine("The following spaces are available based on your needs:");
+                        Console.WriteLine(String.Format($"{"Space #",-10}{"Name",-25}{"Daily Rate",-15}{"Max Occup.",-15}{"Accessible?",-15}{"Total Cost",-15}"));
                         foreach (Reservation reservation in reservationCollection)
                         {
-                            Console.WriteLine($"{reservation.SpaceId, -10}{reservation.SpaceName, -25}{reservation.DailyCost.ToString("C"), -15}{reservation.MaxOccup, -15}{reservation.Accessible, -15}{reservation.TotalCost.ToString("C"), -15}");
+                            Console.WriteLine($"{reservation.SpaceId,-10}{reservation.SpaceName,-25}{reservation.DailyCost.ToString("C"),-15}{reservation.MaxOccup,-15}{reservation.Accessible,-15}{reservation.TotalCost.ToString("C"),-15}");
 
                         }
 

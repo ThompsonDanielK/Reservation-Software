@@ -32,7 +32,7 @@ namespace Capstone.IntegrationTests
             VenueDAO dao = new VenueDAO(ConnectionString);
 
             // Act
-            Venue result = dao.SelectVenue(1);
+            Venue result = dao.SelectVenue(1, dao.GetVenue());
 
             // Assert
             Assert.IsNotNull(result);

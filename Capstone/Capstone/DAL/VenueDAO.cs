@@ -28,7 +28,7 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
-        public ICollection<Venue> GetVenue()
+        public List<Venue> GetVenue()
         {
             List<Venue> results = new List<Venue>();
 
@@ -84,11 +84,8 @@ namespace Capstone.DAL
             return results;
         }
 
-        public Venue SelectVenue(int input)
-        {
-            List<Venue> results = new List<Venue>();
-
-            results = (List<Venue>)GetVenue();
+        public Venue SelectVenue(int input, List<Venue> results)
+        {          
 
             try
             {

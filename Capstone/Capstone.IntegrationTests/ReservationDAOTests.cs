@@ -18,7 +18,7 @@ namespace Capstone.IntegrationTests
             // Arrange
             ReservationDAO dao = new ReservationDAO(ConnectionString);
             VenueDAO venueDao = new VenueDAO(ConnectionString);
-            Venue venue = venueDao.SelectVenue(1);
+            Venue venue = venueDao.SelectVenue(1, venueDao.GetVenue());
 
             // Act
             ICollection<Reservation> result = dao.ReserveASpace(Convert.ToDateTime(date), days, attendees, venue);
