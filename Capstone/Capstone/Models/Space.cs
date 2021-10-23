@@ -27,7 +27,7 @@ namespace Capstone.Models
                     return "";
                 }
 
-                return Convert.ToDateTime(openingMonth.ToString() + "/01/2001").ToString("MMM");
+                return Convert.ToDateTime(openingMonth.ToString() + "/01/2001").ToString("MMM") + ".";
             }
         }
 
@@ -40,7 +40,7 @@ namespace Capstone.Models
                     return "";
                 }
 
-                return Convert.ToDateTime(closingMonth.ToString() + "/01/2001").ToString("MMM");
+                return Convert.ToDateTime(closingMonth.ToString() + "/01/2001").ToString("MMM") + ".";
             }
         }
 

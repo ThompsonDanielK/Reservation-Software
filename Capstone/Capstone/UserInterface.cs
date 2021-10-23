@@ -211,7 +211,7 @@ namespace Capstone
             if (spaceCollection.Count > 0)
             {
                 Console.Clear();
-                Console.WriteLine(venue.Name);
+                Console.WriteLine(venue.Name + " Spaces");
                 Console.WriteLine();
                 Console.WriteLine($"{" ",-6}{"Name",-25}{"Open",-8}{"Close",-8}{"Daily Rate",-15}{"Max. Occupancy",-15}");
 
