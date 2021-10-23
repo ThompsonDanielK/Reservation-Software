@@ -68,13 +68,14 @@ namespace Capstone
 
                                 while (loopOnOff2)
                                 {
-                                    Venue ven = SelectVenueHelper(venue, input2);
+                                    Venue ven = VenueDetails(venue, input2);
 
                                     if (ven.Id != -1 && ven.Id != -2)
                                     {
 
 
-                                        loopOnOff2 = VenueDetails(ven);
+                                        loopOnOff2 = VenueDetailsMenu(ven);
+                                        
 
 
                                     }
@@ -134,7 +135,7 @@ namespace Capstone
             return venue;
         }
 
-        public Venue SelectVenueHelper(List<Venue> venue, string input)
+        public Venue VenueDetails(List<Venue> venue, string input)
         {
             Venue ven = new Venue();
             try
@@ -169,7 +170,7 @@ namespace Capstone
         }
 
 
-        public bool VenueDetails(Venue venue)
+        public bool VenueDetailsMenu(Venue venue)
         {
             if (venue.Id != -1)
             {
@@ -202,7 +203,7 @@ namespace Capstone
                     }
                 }
             }
-            return false;
+            return true;
         }
 
         public void GetSpaceHelper(ICollection<Space> spaceCollection, Venue venue)
