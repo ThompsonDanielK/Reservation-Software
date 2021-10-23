@@ -9,18 +9,14 @@ namespace Capstone.DAL
     public class ReservationDAO
     {
         private readonly string connectionString;
+        
 
-        private const string SqlMakeReservation = "SELECT TOP 5 s.id, s.name, s.daily_rate, s.max_occupancy, " +
-            "s.is_accessible, s.daily_rate * @days AS totalcost " +
-            "FROM space s " +
-            "WHERE NOT EXISTS (SELECT * FROM reservation " +
-            "WHERE start_date BETWEEN @startdate AND DATEADD(day, @days, @startdate) " +
-            "AND end_date BETWEEN @startdate AND DATEADD(day, @days, @startdate) " +
-            "AND s.venue_id = @venueid)" +
-            " AND ((MONTH(@startdate) > s.open_from " +
-            "AND MONTH(@startdate) < s.open_to) OR s.open_from IS NULL) " +
-            "AND s.venue_id = @venueid " +
-            "GROUP BY s.id, s.name, s.daily_rate, s.max_occupancy, s.is_accessible, s.daily_rate * @days";
+        private const string SqlMakeReservation = "SELECT TOP 5 s.id, s.name, s.daily_rate, s.max_occupancy," +
+            " s.is_accessible, s.daily_rate * @days AS totalcost " +
+            "FROM space s where venue_id= @venueid " +
+            "AND s.id NOT IN (SELECT s.id from reservation r JOIN space s on r.space_id = s.id " +
+            "WHERE s.venue_id=  @venueid AND r.end_date >= DATEADD(day, @days, @startdate) " +
+            "AND r.start_date <= @startdate)";
 
         private const string SqlInsertReservation = "INSERT INTO reservation " +
             "(space_id, number_of_attendees, start_date, end_date, reserved_for) " +
