@@ -29,10 +29,13 @@ namespace Capstone.IntegrationTests
         public void SelectVenue_()
         {
             // Arrange
+            VenueDAO dao = new VenueDAO(ConnectionString);
 
             // Act
+            Venue result = dao.SelectVenue(1);
 
             // Assert
+            Assert.IsNotNull(result);
         }
     }
 }
