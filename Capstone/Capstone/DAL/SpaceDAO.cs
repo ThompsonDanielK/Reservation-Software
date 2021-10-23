@@ -38,8 +38,7 @@ namespace Capstone.DAL
                         {
                             Id = Convert.ToInt32(reader["id"]),
                             Name = Convert.ToString(reader["name"]),
-                            MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]),
-                            WheelchairAccessible = Convert.ToBoolean(reader["is_accessible"]),
+                            MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]),                            
                             DailyRate = Convert.ToDecimal(reader["daily_rate"])                                                   
                         };
 

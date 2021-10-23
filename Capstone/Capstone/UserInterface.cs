@@ -202,11 +202,11 @@ namespace Capstone
                 Console.WriteLine();
                 Console.WriteLine(venue.Name);
                 Console.WriteLine();
-                Console.WriteLine("      Name          Open   Close   Daily Rate   Max. Occupancy");
+                Console.WriteLine($"{" ", -6}{"Name", -25}{"Open", -8}{"Close", -8}{"Daily Rate", -15}{"Max. Occupancy", -15}");
 
                 foreach (Space space in spaceCollection)
                 {
-                    Console.WriteLine($"#{space.Id}   {space.Name}   {space.OpeningMonth}   {space.ClosingMonth}   {space.DailyRate.ToString("C")}   {space.MaxOccupancy}");
+                    Console.WriteLine($"#{space.Id, -5}{space.Name, -25}{space.OpeningMonth, -8}{space.ClosingMonth, -8}{space.DailyRate.ToString("C"), -15}{space.MaxOccupancy, -15}");
                 }
 
             }
@@ -245,66 +245,65 @@ namespace Capstone
 
             while (loopOnOff)
             {
-                DateTime date;
-                int howManyDays, attendees;
-
-                ReserveASpaceMenuText(out date, out howManyDays, out attendees);
-
-
-
-                ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
-
-                if (reservationCollection.Count < 1)
+                try
                 {
-                    Console.WriteLine("No reservations available, would you like to try again? (Y/N)");
-                    string input = Console.ReadLine().ToUpper();
-
-                    if (input == "N")
-                    {
-                        return;
-                    }
-
-                }
-                else
-                {
-                    loopOnOff = false;
-                    Console.WriteLine("Space #    Name            Daily Rate      Max Occup.      Accessible?      Total Cost");
-                    foreach (Reservation reservation in reservationCollection)
-                    {
-                        Console.WriteLine($"{reservation.SpaceId}    {reservation.SpaceName}    {reservation.DailyCost.ToString("C")}   {reservation.MaxOccup}    {reservation.Accessible}    {reservation.TotalCost.ToString("C")}");
-
-                    }
-
                     Console.WriteLine();
-                    Console.Write("Which space would you like to reserve? (enter 0 to cancel)? ");
-                    int spaceNumber = Convert.ToInt32(Console.ReadLine());
-                    if (spaceNumber == 0)
+                    Console.Write("When do you need the space? ");
+                    DateTime date = Convert.ToDateTime(Console.ReadLine());
+                    Console.Write("How many days will you need the space? ");
+                    int howManyDays = Convert.ToInt32(Console.ReadLine());
+                    Console.Write("How many people will be in attendance? ");
+                    int attendees = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine();
+                    Console.WriteLine("The following spaces are available based on your needs:");
+                    Console.WriteLine();
+
+
+
+                    ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
+
+                    if (reservationCollection.Count < 1)
                     {
-                        return;
+                        Console.WriteLine("No reservations available, would you like to try again? (Y/N)");
+                        string input = Console.ReadLine().ToUpper();
+
+                        if (input == "N")
+                        {
+                            return;
+                        }
+
                     }
                     else
                     {
-                        MakeReservationHelper(spaceNumber, reservationCollection, venue);
+                        loopOnOff = false;                        
+                        Console.WriteLine(String.Format($"{"Space #", -10}{"Name", -25}{"Daily Rate", -15}{"Max Occup.", -15}{"Accessible?", -15}{"Total Cost", -15}"));
+                        foreach (Reservation reservation in reservationCollection)
+                        {
+                            Console.WriteLine($"{reservation.SpaceId, -10}{reservation.SpaceName, -25}{reservation.DailyCost.ToString("C"), -15}{reservation.MaxOccup, -15}{reservation.Accessible, -15}{reservation.TotalCost.ToString("C"), -15}");
+
+                        }
+
+                        Console.WriteLine();
+                        Console.Write("Which space would you like to reserve? (enter 0 to cancel)? ");
+                        int spaceNumber = Convert.ToInt32(Console.ReadLine());
+                        if (spaceNumber == 0)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            MakeReservationHelper(spaceNumber, reservationCollection, venue);
+                        }
                     }
                 }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine("Invalid input: " + ex.Message);
+                }
             }
-        }
-
-        private static void ReserveASpaceMenuText(out DateTime date, out int howManyDays, out int attendees)
-        {
-
-            Console.WriteLine();
-            Console.Write("When do you need the space? ");
-            date = Convert.ToDateTime(Console.ReadLine());
-            Console.Write("How many days will you need the space? ");
-            howManyDays = Convert.ToInt32(Console.ReadLine());
-            Console.Write("How many people will be in attendance? ");
-            attendees = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine();
-            Console.WriteLine("The following spaces are available based on your needs:");
-            Console.WriteLine();
 
         }
+
 
         public void MakeReservationHelper(int spaceNumber, ICollection<Reservation> reservationCollection, Venue venue)
         {

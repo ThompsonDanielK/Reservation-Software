@@ -16,8 +16,6 @@ namespace Capstone.Models
 
         public int MaxOccupancy { get; set; }
 
-        public bool WheelchairAccessible { get; set; }
-
         public decimal DailyRate { get; set; }
 
        
