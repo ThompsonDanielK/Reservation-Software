@@ -10,7 +10,7 @@ namespace Capstone.DAL
     {
         private readonly string connectionString;
 
-        private const string SqlMakeReservation = "SELECT s.id, s.name, s.daily_rate, s.max_occupancy, " +
+        private const string SqlMakeReservation = "SELECT TOP 5 s.id, s.name, s.daily_rate, s.max_occupancy, " +
             "s.is_accessible, s.daily_rate * @days AS totalcost " +
             "FROM space s " +
             "WHERE NOT EXISTS (SELECT * FROM reservation " +
