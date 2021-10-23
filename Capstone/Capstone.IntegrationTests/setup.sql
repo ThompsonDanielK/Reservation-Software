@@ -38,6 +38,11 @@ INSERT INTO space
 VALUES
 	(1, 1, 'The Cool Zone', 1, 6, 10, 1000, 20)
 
+INSERT INTO space	
+	(id, venue_id, name, is_accessible, daily_rate, max_occupancy)
+VALUES
+	(2, 1, 'The Tropic Zone', 0, 250, 30)
+
 SET IDENTITY_INSERT space OFF
 
 SET IDENTITY_INSERT reservation ON

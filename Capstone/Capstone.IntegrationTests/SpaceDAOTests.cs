@@ -23,7 +23,7 @@ namespace Capstone.IntegrationTests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(2, result.Count);
         }
     }
 }

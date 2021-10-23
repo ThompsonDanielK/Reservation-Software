@@ -20,20 +20,6 @@ namespace Capstone.Models
 
         public decimal DailyRate { get; set; }
 
-        public DateTime OpeningDate
-        {
-            get
-            {
-                return new DateTime(DateTime.Now.Year, OpeningMonth, 01);
-            }
-        }
-
-        public DateTime ClosingDate
-        {
-            get
-            {
-                return new DateTime(DateTime.Now.Year, ClosingMonth, 1).AddMonths(1).AddDays(-1);
-            }
-        }
+       
     }
 }

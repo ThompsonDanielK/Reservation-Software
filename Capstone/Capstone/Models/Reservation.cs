@@ -10,18 +10,12 @@ namespace Capstone.Models
 
         public string SpaceName { get; set; }
 
-        public string VenueName { get; set; }
-
-        public int Id { get; set;}
-
         public int NumberOfAttendees { get; set; }
 
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
-
-        public string Name { get; set; }
-
+    
         public decimal DailyCost { get; set; }
 
         public decimal TotalCost { get; set; }
