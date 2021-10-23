@@ -68,7 +68,7 @@ namespace Capstone.DAL
                             DailyCost = Convert.ToDecimal(reader["daily_rate"]),
                             TotalCost = Convert.ToDecimal(reader["totalcost"]),
                             MaxOccup = Convert.ToInt32(reader["max_occupancy"]),
-                            Accessible = Convert.ToBoolean(reader["is_accessible"])
+                            accessible = Convert.ToBoolean(reader["is_accessible"])
 
                         };
 

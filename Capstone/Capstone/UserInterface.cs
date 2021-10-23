@@ -293,7 +293,7 @@ namespace Capstone
                         }
 
                         Console.WriteLine();
-                        Console.Write("Which space would you like to reserve? (enter 0 to cancel)? ");
+                        Console.Write("Which space would you like to reserve (enter 0 to cancel)? ");
                         int spaceNumber = Convert.ToInt32(Console.ReadLine());
                         if (spaceNumber == 0)
                         {
@@ -343,6 +343,9 @@ namespace Capstone
             Console.WriteLine("Arrival Date: " + reservation.StartDate.ToString("MM/dd/yyyy"));
             Console.WriteLine("Depart Date: " + reservation.EndDate.ToString("MM/dd/yyyy"));
             Console.WriteLine("Total Cost: " + reservation.TotalCost.ToString("C"));
+            Console.WriteLine();
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
         }
     }
 }

@@ -44,20 +44,20 @@ namespace Capstone.DAL
 
                         if (!DBNull.Value.Equals(reader["open_from"]))
                         {
-                            space.OpeningMonth = Convert.ToInt32(reader["open_from"]);
+                            space.openingMonth = Convert.ToInt32(reader["open_from"]);
                         }
                         else
                         {
-                            space.OpeningMonth = 0;
+                            space.openingMonth = 0;
                         }
 
                         if (!DBNull.Value.Equals(reader["open_to"]))
                         {
-                            space.ClosingMonth = Convert.ToInt32(reader["open_to"]);
+                            space.closingMonth = Convert.ToInt32(reader["open_to"]);
                         }
                         else
                         {
-                            space.ClosingMonth = 0;
+                            space.closingMonth = 0;
                         }
 
                         results.Add(space);

@@ -6,6 +6,8 @@ namespace Capstone.Models
 {
     public class Reservation
     {
+        public bool accessible;
+
         public int SpaceId { get; set; }
 
         public string SpaceName { get; set; }
@@ -22,7 +24,19 @@ namespace Capstone.Models
 
         public int MaxOccup { get; set; }
 
-        public bool Accessible { get; set; }
+        public string Accessible
+        {
+            get
+            {
+                if (accessible)
+                {
+                    return "Yes";
+                }
+
+                return "No";
+            }
+        }
+
 
 
     }
