@@ -29,6 +29,11 @@ INSERT INTO venue
 VALUES
 	(1, 'The Lounge', 1, 'The cool place to be')
 
+INSERT INTO venue
+	(id, name, city_id, description)
+VALUES
+	(2, 'The Arena', 1, 'The dangerous place to be')
+
 SET IDENTITY_INSERT venue OFF
 
 SET IDENTITY_INSERT space ON
@@ -42,6 +47,11 @@ INSERT INTO space
 	(id, venue_id, name, is_accessible, daily_rate, max_occupancy)
 VALUES
 	(2, 1, 'The Tropic Zone', 0, 250, 30)
+
+INSERT INTO space	
+	(id, venue_id, name, is_accessible, daily_rate, max_occupancy)
+VALUES
+	(3, 2, 'The Crazy Zone', 0, 1000, 50)
 
 SET IDENTITY_INSERT space OFF
 

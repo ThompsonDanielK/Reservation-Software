@@ -100,6 +100,10 @@ namespace Capstone
                         loopOnOff2 = false;
                         loopOnOff = false;
                     }
+                    else if (ven.Id == -2)
+                    {
+                        loopOnOff2 = false;
+                    }
                 }
             }
         }
@@ -159,6 +163,8 @@ namespace Capstone
             catch (FormatException ex)
             {
                 Console.WriteLine("Invalid selection: " + ex.Message);
+                Console.WriteLine("Press enter to try again.");
+                Console.ReadLine();
             }
 
             if (ven.Id != -1)
@@ -190,11 +196,12 @@ namespace Capstone
                 Console.WriteLine("1) View Spaces");
                 Console.WriteLine("R) Return to Previous Screen");
 
-                string input = Console.ReadLine();
                 bool loopOnOff = true;
 
                 while (loopOnOff)
                 {
+
+                    string input = Console.ReadLine();
                     switch (input)
                     {
                         case "1":
@@ -209,6 +216,10 @@ namespace Capstone
                         case "R":
                             loopOnOff = false;
                             return false;
+
+                        default:
+                            Console.WriteLine("That's not a valid selection. Press try again.");
+                            break;
                     }
                 }
             }
@@ -268,18 +279,28 @@ namespace Capstone
             Console.WriteLine("1) Reserve a Space");
             Console.WriteLine("R) Return to Previous Screen");
 
-            string input = Console.ReadLine();
-
-            switch (input)
+            bool loopOnOff = true;
+            while (loopOnOff)
             {
-                case "1":
-                    //Reserve a space
-                    ReserveASpace(venue);
-                    break;
-                case "r":
-                    return false;
-                case "R":
-                    return false;
+                string input = Console.ReadLine();
+                switch (input)
+                {
+
+                    case "1":
+                        //Reserve a space
+                        ReserveASpace(venue);
+                        break;
+
+                    case "r":
+                        return false;
+
+                    case "R":
+                        return false;
+
+                    default:
+                        Console.WriteLine("That's not a valid selection. Press try again.");
+                        break;
+                }
             }
             return true;
         }
@@ -296,7 +317,7 @@ namespace Capstone
             {
                 try
                 {
-                    Console.WriteLine();                    
+                    Console.WriteLine();
 
                     DateTime date = GetDate();
                     int howManyDays = GetHowManyDays();

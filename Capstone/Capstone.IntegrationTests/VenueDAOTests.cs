@@ -21,21 +21,24 @@ namespace Capstone.IntegrationTests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(2, result.Count);
 
         }
 
         [TestMethod]
-        public void SelectVenue_()
+        [DataRow(1, 2)]
+        [DataRow(2, 1)]
+        public void SelectVenue_ReturnsCorrectVenue(int selectedVenue, int expected)
         {
             // Arrange
             VenueDAO dao = new VenueDAO(ConnectionString);
 
             // Act
-            Venue result = dao.SelectVenue(1, dao.GetVenue());
+            Venue result = dao.SelectVenue(selectedVenue, dao.GetVenue());
 
             // Assert
             Assert.IsNotNull(result);
+            Assert.AreEqual(expected, result.Id);
         }
     }
 }

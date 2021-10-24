@@ -11,14 +11,16 @@ namespace Capstone.IntegrationTests
     public class ReservationDAOTests : IntegrationTestBase
     {
         [TestMethod]
-        [DataRow("01/01/2021", 2, 2, 1)]
-        [DataRow("07/06/2021", 2, 2, 2)]
-        public void ReserveASpace_ReturnsCorrectAmountOfOpeningSpaces(string date, int days, int attendees, int expected)
+        [DataRow("01/01/2021", 2, 2, 1, 1)]
+        [DataRow("07/06/2021", 2, 2, 1, 1)]
+        [DataRow("07/06/2021", 2, 2, 2, 2)]
+        [DataRow("01/01/2021", 2, 2, 2, 1)]
+        public void ReserveASpace_ReturnsCorrectAmountOfOpeningSpaces(string date, int days, int attendees, int selectedVenue, int expected)
         {
             // Arrange
             ReservationDAO dao = new ReservationDAO(ConnectionString);
             VenueDAO venueDao = new VenueDAO(ConnectionString);
-            Venue venue = venueDao.SelectVenue(1, venueDao.GetVenue());
+            Venue venue = venueDao.SelectVenue(selectedVenue, venueDao.GetVenue());
 
             // Act
             ICollection<Reservation> result = dao.ReserveASpace(Convert.ToDateTime(date), days, attendees, venue);
