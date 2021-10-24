@@ -274,14 +274,15 @@ namespace Capstone
         /// <returns>A bool that if false, will turn off the loop in the ViewSpaces method.</returns>
         public bool ListVenueSpaceMenu(Venue venue)
         {
-            Console.WriteLine();
-            Console.WriteLine("What would you like to do next?");
-            Console.WriteLine("1) Reserve a Space");
-            Console.WriteLine("R) Return to Previous Screen");
 
             bool loopOnOff = true;
             while (loopOnOff)
             {
+
+                Console.WriteLine();
+                Console.WriteLine("What would you like to do next?");
+                Console.WriteLine("1) Reserve a Space");
+                Console.WriteLine("R) Return to Previous Screen");
                 string input = Console.ReadLine();
                 switch (input)
                 {
@@ -334,7 +335,7 @@ namespace Capstone
 
                         if (input == "N")
                         {
-                            return;
+                            loopOnOff = false;
                         }
 
                     }
@@ -378,7 +379,7 @@ namespace Capstone
                 int spaceNumber = Convert.ToInt32(Console.ReadLine());
                 if (spaceNumber == 0)
                 {
-                    loopOnOff5 = false;
+                    return false;
 
                 }
                 else
@@ -397,14 +398,15 @@ namespace Capstone
                     }
                     else
                     {
-                        loopOnOff = MakeReservationHelper(spaceNumber, reservationCollection, venue);
-                        loopOnOff5 = false;
+                        loopOnOff5 = MakeReservationHelper(spaceNumber, reservationCollection, venue);
+                        return false;
+                        //loopOnOff5 = false;
 
                     }
                 }
             }
 
-            return loopOnOff;
+            return true;
         }
 
         /// <summary>
