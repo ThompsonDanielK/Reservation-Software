@@ -28,6 +28,10 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Queries the database and creates a list of venue objects.
+        /// </summary>
+        /// <returns>A list containing all venues as objects.</returns>
         public List<Venue> GetVenue()
         {
             List<Venue> results = new List<Venue>();
@@ -84,6 +88,12 @@ namespace Capstone.DAL
             return results;
         }
 
+        /// <summary>
+        /// Pulls one venue out of a list of venues.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="results"></param>
+        /// <returns>Returns selected venue.</returns>
         public Venue SelectVenue(int input, List<Venue> results)
         {          
 

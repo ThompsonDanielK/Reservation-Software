@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Capstone.DAL
 {
+    /// <summary>
+    /// This class is responsible for querying the database and working with Venues
+    /// </summary>
     public class SpaceDAO
     {
         private readonly string connectionString;
@@ -17,6 +20,11 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Queries the database and builds a list of spaces.
+        /// </summary>
+        /// <param name="ven"></param>
+        /// <returns>Returns a collection of spaces.</returns>
         public ICollection<Space> GetSpaces(Venue ven)
         {
             List<Space> results = new List<Space>();
@@ -38,27 +46,10 @@ namespace Capstone.DAL
                         {
                             Id = Convert.ToInt32(reader["id"]),
                             Name = Convert.ToString(reader["name"]),
-                            MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]),                            
-                            DailyRate = Convert.ToDecimal(reader["daily_rate"])                                                   
+                            MaxOccupancy = Convert.ToInt32(reader["max_occupancy"]),
+                            DailyRate = Convert.ToDecimal(reader["daily_rate"])
                         };
-
-                        if (!DBNull.Value.Equals(reader["open_from"]))
-                        {
-                            space.openingMonth = Convert.ToInt32(reader["open_from"]);
-                        }
-                        else
-                        {
-                            space.openingMonth = 0;
-                        }
-
-                        if (!DBNull.Value.Equals(reader["open_to"]))
-                        {
-                            space.closingMonth = Convert.ToInt32(reader["open_to"]);
-                        }
-                        else
-                        {
-                            space.closingMonth = 0;
-                        }
+                        DateNullCheck(reader, space);
 
                         results.Add(space);
                     }
@@ -70,6 +61,32 @@ namespace Capstone.DAL
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Sets openingMonth and closingMonth to an empty string if null
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="space"></param>
+        private void DateNullCheck(SqlDataReader reader, Space space)
+        {
+            if (!DBNull.Value.Equals(reader["open_from"]))
+            {
+                space.openingMonth = Convert.ToInt32(reader["open_from"]);
+            }
+            else
+            {
+                space.openingMonth = 0;
+            }
+
+            if (!DBNull.Value.Equals(reader["open_to"]))
+            {
+                space.closingMonth = Convert.ToInt32(reader["open_to"]);
+            }
+            else
+            {
+                space.closingMonth = 0;
+            }
         }
     }
 }

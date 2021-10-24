@@ -25,9 +25,7 @@ namespace Capstone
         private readonly string connectionString;
 
         private readonly VenueDAO venueDAO;
-
         private readonly SpaceDAO spaceDAO;
-
         private readonly ReservationDAO reservationDAO;
 
         public UserInterface(string connectionString)
@@ -41,7 +39,6 @@ namespace Capstone
         public void Run()
         {
             bool quit = false;
-
             while (!quit)
             {
                 Console.Clear();
@@ -75,13 +72,16 @@ namespace Capstone
             }
         }
 
+        /// <summary>
+        /// Contains methods that list venues and displays a menu.
+        /// </summary>
         private void ListVenuesMethods()
         {
             bool loopOnOff = true;
             while (loopOnOff)
             {
 
-                List<Venue> venue = GetVenueHelper();
+                List<Venue> venue = ListVenues();
                 string input2 = Console.ReadLine();
                 bool loopOnOff2 = true;
 
@@ -104,7 +104,11 @@ namespace Capstone
             }
         }
 
-        public List<Venue> GetVenueHelper()
+        /// <summary>
+        /// Loops through venues and display them to Console.
+        /// </summary>
+        /// <returns>A list of venues</returns>
+        public List<Venue> ListVenues()
         {
             List<Venue> venue = venueDAO.GetVenue();
 
@@ -130,6 +134,12 @@ namespace Capstone
             return venue;
         }
 
+        /// <summary>
+        /// Displays details about selected venue.
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <param name="input"></param>
+        /// <returns>The selected venue</returns>
         public Venue VenueDetails(List<Venue> venue, string input)
         {
             Venue ven = new Venue();
@@ -166,7 +176,11 @@ namespace Capstone
             return ven;
         }
 
-
+        /// <summary>
+        /// Displays a menu and contains a method that allows uses to view spaces within a venue.
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <returns>A bool that turns off ListVenuesMethods while loop if user wants to return to previous screen.</returns>
         public bool VenueDetailsMenu(Venue venue)
         {
             if (venue.Id != -1)
@@ -201,6 +215,11 @@ namespace Capstone
             return true;
         }
 
+        /// <summary>
+        /// Contains methods the get spaces and list a menu for the space.
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <returns>A bool that if false, will turn off the loop in VenueDetailsMenu.</returns>
         private bool ViewSpaces(Venue venue)
         {
             bool loopOnOff;
@@ -210,6 +229,11 @@ namespace Capstone
             return loopOnOff;
         }
 
+        /// <summary>
+        /// Loops through spaces in a collection and prints them to console.
+        /// </summary>
+        /// <param name="spaceCollection"></param>
+        /// <param name="venue"></param>
         public void GetSpaceHelper(ICollection<Space> spaceCollection, Venue venue)
         {
 
@@ -232,6 +256,11 @@ namespace Capstone
             }
         }
 
+        /// <summary>
+        /// Space Menu, allows for user input and contains a method to reserve a space.
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <returns>A bool that if false, will turn off the loop in the ViewSpaces method.</returns>
         public bool ListVenueSpaceMenu(Venue venue)
         {
             Console.WriteLine();
@@ -245,7 +274,7 @@ namespace Capstone
             {
                 case "1":
                     //Reserve a space
-                    ReserveASpaceMenu(venue);
+                    ReserveASpace(venue);
                     break;
                 case "r":
                     return false;
@@ -255,7 +284,11 @@ namespace Capstone
             return true;
         }
 
-        public void ReserveASpaceMenu(Venue venue)
+        /// <summary>
+        /// Contains methods that take in user input and lists spaces avaible to be reserved.
+        /// </summary>
+        /// <param name="venue"></param>
+        public void ReserveASpace(Venue venue)
         {
             bool loopOnOff = true;
 
@@ -263,13 +296,12 @@ namespace Capstone
             {
                 try
                 {
-                    Console.WriteLine();
-                    Console.Write("When do you need the space? ");
-                    DateTime date = Convert.ToDateTime(Console.ReadLine());
-                    Console.Write("How many days will you need the space? ");
-                    int howManyDays = Convert.ToInt32(Console.ReadLine());
-                    Console.Write("How many people will be in attendance? ");
-                    int attendees = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine();                    
+
+                    DateTime date = GetDate();
+                    int howManyDays = GetHowManyDays();
+                    int attendees = GetHowManyAttendees();
+
                     Console.WriteLine();
 
                     ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
@@ -297,39 +329,7 @@ namespace Capstone
                             Console.WriteLine($"{reservation.SpaceId,-10}{reservation.SpaceName,-25}{reservation.DailyCost.ToString("C"),-15}{reservation.MaxOccup,-15}{reservation.Accessible,-15}{reservation.TotalCost.ToString("C"),-15}");
                         }
 
-                        bool loopOnOff2 = true;
-                        while (loopOnOff2)
-                        {
-                            Console.WriteLine();
-                            Console.Write("Which space would you like to reserve (enter 0 to cancel)? ");
-                            int spaceNumber = Convert.ToInt32(Console.ReadLine());
-                            if (spaceNumber == 0)
-                            {
-                                loopOnOff2 = false;
-                                
-                            }
-                            else
-                            {
-                                int count = 0;
-                                foreach (Reservation reservation in reservationCollection)
-                                {
-                                    if (reservation.SpaceId == spaceNumber)
-                                    {
-                                        count++;
-                                    }
-                                }
-                                if (count < 1)
-                                {
-                                    Console.WriteLine("Invalid Selection");
-                                }
-                                else
-                                {
-                                    loopOnOff = MakeReservationHelper(spaceNumber, reservationCollection, venue);
-                                    loopOnOff2 = false;
-                                    
-                                }
-                            }
-                        }
+                        loopOnOff = GetSpaceNumber(venue, loopOnOff, reservationCollection);
                     }
                 }
                 catch (FormatException ex)
@@ -340,7 +340,140 @@ namespace Capstone
 
         }
 
+        /// <summary>
+        /// Gets a space number from user and contains a method to make a reservation.
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <param name="loopOnOff"></param>
+        /// <param name="reservationCollection"></param>
+        /// <returns>A bool that if false, will turn off the loop in the ReserveASpace method.</returns>
+        private bool GetSpaceNumber(Venue venue, bool loopOnOff, ICollection<Reservation> reservationCollection)
+        {
+            bool loopOnOff5 = true;
+            while (loopOnOff5)
+            {
+                Console.WriteLine();
+                Console.Write("Which space would you like to reserve (enter 0 to cancel)? ");
+                int spaceNumber = Convert.ToInt32(Console.ReadLine());
+                if (spaceNumber == 0)
+                {
+                    loopOnOff5 = false;
 
+                }
+                else
+                {
+                    int count = 0;
+                    foreach (Reservation reservation in reservationCollection)
+                    {
+                        if (reservation.SpaceId == spaceNumber)
+                        {
+                            count++;
+                        }
+                    }
+                    if (count < 1)
+                    {
+                        Console.WriteLine("Invalid Selection");
+                    }
+                    else
+                    {
+                        loopOnOff = MakeReservationHelper(spaceNumber, reservationCollection, venue);
+                        loopOnOff5 = false;
+
+                    }
+                }
+            }
+
+            return loopOnOff;
+        }
+
+        /// <summary>
+        /// Gets amount of attendees from user and checks to see if its valid.
+        /// </summary>
+        /// <returns>The amount of attendees</returns>
+        public int GetHowManyAttendees()
+        {
+            int attendees = -1;
+            bool loopOnOff4 = true;
+            while (loopOnOff4)
+            {
+                Console.Write("How many people will be in attendance? ");
+                attendees = Convert.ToInt32(Console.ReadLine());
+
+                if (attendees < 1)
+                {
+                    Console.WriteLine("You cannot make reservations for less than 1 person. Please input a vaild amount of people attending.");
+                    Console.WriteLine();
+                }
+                else
+                {
+                    loopOnOff4 = false;
+                }
+            }
+
+            return attendees;
+        }
+
+        /// <summary>
+        /// Gets amount of days from user and checks if its valid.
+        /// </summary>
+        /// <returns>The amount of days</returns>
+        public int GetHowManyDays()
+        {
+            int howManyDays = -1;
+            bool loopOnOff3 = true;
+            while (loopOnOff3)
+            {
+                Console.Write("How many days will you need the space? ");
+                howManyDays = Convert.ToInt32(Console.ReadLine());
+
+                if (howManyDays < 1)
+                {
+                    Console.WriteLine("You cannot make reservations for less than 1 day. Please input a vaild amount of days.");
+                    Console.WriteLine();
+                }
+                else
+                {
+                    loopOnOff3 = false;
+                }
+            }
+
+            return howManyDays;
+        }
+
+        /// <summary>
+        /// Gets the date from user and checks if its valid.
+        /// </summary>
+        /// <returns>Date of potential reservation</returns>
+        public DateTime GetDate()
+        {
+            DateTime date = DateTime.Now;
+            bool loopOnOff2 = true;
+            while (loopOnOff2)
+            {
+                Console.Write("When do you need the space? ");
+                date = Convert.ToDateTime(Console.ReadLine());
+
+                if (date < DateTime.Now)
+                {
+                    Console.WriteLine("You cannot make reservations on dates in the past. Please input a valid date.");
+                    Console.WriteLine();
+                }
+                else
+                {
+                    loopOnOff2 = false;
+                }
+            }
+
+            return date;
+        }
+
+        /// <summary>
+        /// Loops through reservations in a collection to see if any reservation match the space number passed through in the parameters
+        /// </summary>
+        /// <param name="spaceNumber"></param>
+        /// <param name="reservationCollection"></param>
+        /// <param name="venue"></param>
+        /// <returns>A bool that if false, will end the first loop in GetSpaceNumber method</returns>
         public bool MakeReservationHelper(int spaceNumber, ICollection<Reservation> reservationCollection, Venue venue)
         {
             Reservation reservation = new Reservation();
@@ -359,7 +492,19 @@ namespace Capstone
             Console.WriteLine();
 
             int confirmationNumber = reservationDAO.MakeReservation(reservation, name);
+            return ReservationConfirmationDetails(venue, reservation, name, confirmationNumber);
+        }
 
+        /// <summary>
+        /// Confirms submission of reservation and lists reservation details
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <param name="reservation"></param>
+        /// <param name="name"></param>
+        /// <param name="confirmationNumber"></param>
+        /// <returns>A bool that is passed returned to the MakeReservationHelper method. If false, will end the first loop in GetSpaceNumber method</returns>
+        public bool ReservationConfirmationDetails(Venue venue, Reservation reservation, string name, int confirmationNumber)
+        {
             Console.WriteLine("Thanks for submitting your reservation! The details for your event are listed below:");
             Console.WriteLine();
             Console.WriteLine("Confirmation #: " + confirmationNumber);

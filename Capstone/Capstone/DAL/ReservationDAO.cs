@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Capstone.DAL
 {
+    /// <summary>
+    /// This class is responsible for querying the database and working with Reservations.
+    /// </summary>
     public class ReservationDAO
     {
         private readonly string connectionString;
@@ -34,6 +37,14 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Queries the database and creates a list of reservations.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="days"></param>
+        /// <param name="attendees"></param>
+        /// <param name="venue"></param>
+        /// <returns>Returns a list of reservations</returns>
         public ICollection<Reservation> ReserveASpace(DateTime date, int days, int attendees, Venue venue)
         {
             List<Reservation> results = new List<Reservation>();
@@ -80,6 +91,12 @@ namespace Capstone.DAL
             return results;
         }
 
+        /// <summary>
+        /// Inserts selected reservation into database.
+        /// </summary>
+        /// <param name="reservation"></param>
+        /// <param name="name"></param>
+        /// <returns>The reservation confirmation number.</returns>
         public int MakeReservation(Reservation reservation, string name)
         {          
 
