@@ -80,7 +80,6 @@ namespace Capstone
             bool loopOnOff = true;
             while (loopOnOff)
             {
-
                 List<Venue> venue = ListVenues();
                 string input2 = Console.ReadLine();
                 bool loopOnOff2 = true;
@@ -91,12 +90,10 @@ namespace Capstone
 
                     if (ven.Id != -1 && ven.Id != -2)
                     {
-
                         loopOnOff2 = VenueDetailsMenu(ven);
                     }
                     else if (ven.Id == -1)
                     {
-
                         loopOnOff2 = false;
                         loopOnOff = false;
                     }
@@ -127,14 +124,12 @@ namespace Capstone
                     Console.WriteLine($"{indexPlusOne}) {ven.Name}");
                     indexPlusOne++;
                 }
-
                 Console.WriteLine("R) Return to Previous Screen");
             }
             else
             {
                 Console.WriteLine("**** NO RESULTS ****");
             }
-
             return venue;
         }
 
@@ -157,7 +152,6 @@ namespace Capstone
                 {
                     Console.WriteLine("That is not a valid selection");
                 }
-
                 ven = venueDAO.SelectVenue(Convert.ToInt32(input), venue);
             }
             catch (FormatException ex)
@@ -166,7 +160,6 @@ namespace Capstone
                 Console.WriteLine("Press enter to try again.");
                 Console.ReadLine();
             }
-
             if (ven.Id != -1)
             {
                 Console.Clear();
@@ -177,7 +170,6 @@ namespace Capstone
                 Console.WriteLine(ven.Description);
                 return ven;
             }
-
             ven.Id = -2;
             return ven;
         }
@@ -200,7 +192,6 @@ namespace Capstone
 
                 while (loopOnOff)
                 {
-
                     string input = Console.ReadLine();
                     switch (input)
                     {
@@ -233,10 +224,13 @@ namespace Capstone
         /// <returns>A bool that if false, will turn off the loop in VenueDetailsMenu.</returns>
         private bool ViewSpaces(Venue venue)
         {
-            bool loopOnOff;
+            bool loopOnOff = true;
             ICollection<Space> spaceCollection = spaceDAO.GetSpaces(venue);
-            GetSpaceHelper(spaceCollection, venue);
-            loopOnOff = ListVenueSpaceMenu(venue);
+            while (loopOnOff)
+            {
+                GetSpaceHelper(spaceCollection, venue);
+                loopOnOff = ListVenueSpaceMenu(venue);
+            }
             return loopOnOff;
         }
 
@@ -274,34 +268,27 @@ namespace Capstone
         /// <returns>A bool that if false, will turn off the loop in the ViewSpaces method.</returns>
         public bool ListVenueSpaceMenu(Venue venue)
         {
-
-            bool loopOnOff = true;
-            while (loopOnOff)
+            Console.WriteLine();
+            Console.WriteLine("What would you like to do next?");
+            Console.WriteLine("1) Reserve a Space");
+            Console.WriteLine("R) Return to Previous Screen");
+            string input = Console.ReadLine();
+            switch (input)
             {
+                case "1":
+                    //Reserve a space
+                    ReserveASpace(venue);
+                    break;
 
-                Console.WriteLine();
-                Console.WriteLine("What would you like to do next?");
-                Console.WriteLine("1) Reserve a Space");
-                Console.WriteLine("R) Return to Previous Screen");
-                string input = Console.ReadLine();
-                switch (input)
-                {
+                case "r":
+                    return false;
 
-                    case "1":
-                        //Reserve a space
-                        ReserveASpace(venue);
-                        break;
+                case "R":
+                    return false;
 
-                    case "r":
-                        return false;
-
-                    case "R":
-                        return false;
-
-                    default:
-                        Console.WriteLine("That's not a valid selection. Press try again.");
-                        break;
-                }
+                default:
+                    Console.WriteLine("That's not a valid selection. Press try again.");
+                    break;
             }
             return true;
         }
@@ -313,7 +300,6 @@ namespace Capstone
         public void ReserveASpace(Venue venue)
         {
             bool loopOnOff = true;
-
             while (loopOnOff)
             {
                 try
@@ -326,32 +312,34 @@ namespace Capstone
 
                     Console.WriteLine();
 
-                    ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
-
-                    if (reservationCollection.Count < 1)
+                    bool loopOnOff2 = true;
+                    while (loopOnOff2)
                     {
-                        Console.WriteLine("No reservations available, would you like to try again? (Y/N)");
-                        string input = Console.ReadLine().ToUpper();
+                        loopOnOff2 = false;
+                        ICollection<Reservation> reservationCollection = reservationDAO.ReserveASpace(date, howManyDays, attendees, venue);
 
-                        if (input == "N")
+                        if (reservationCollection.Count < 1)
+                        {
+                            Console.WriteLine("No reservations available, would you like to try again? (Y/N)");
+                            string input = Console.ReadLine().ToUpper();
+
+                            if (input == "N")
+                            {
+                                loopOnOff = false;
+                            }
+                        }
+                        else
                         {
                             loopOnOff = false;
+                            Console.Clear();
+                            Console.WriteLine("The following spaces are available based on your needs:");
+                            Console.WriteLine(String.Format($"{"Space #",-10}{"Name",-25}{"Daily Rate",-15}{"Max Occup.",-15}{"Accessible?",-15}{"Total Cost",-15}"));
+                            foreach (Reservation reservation in reservationCollection)
+                            {
+                                Console.WriteLine($"{reservation.SpaceId,-10}{reservation.SpaceName,-25}{reservation.DailyCost.ToString("C"),-15}{reservation.MaxOccup,-15}{reservation.Accessible,-15}{reservation.TotalCost.ToString("C"),-15}");
+                            }
+                            loopOnOff2 = GetSpaceNumber(venue, loopOnOff, reservationCollection);
                         }
-
-                    }
-                    else
-                    {
-                        loopOnOff = false;
-                        Console.Clear();
-                        Console.WriteLine("The following spaces are available based on your needs:");
-                        Console.WriteLine(String.Format($"{"Space #",-10}{"Name",-25}{"Daily Rate",-15}{"Max Occup.",-15}{"Accessible?",-15}{"Total Cost",-15}"));
-                        foreach (Reservation reservation in reservationCollection)
-                        {
-
-                            Console.WriteLine($"{reservation.SpaceId,-10}{reservation.SpaceName,-25}{reservation.DailyCost.ToString("C"),-15}{reservation.MaxOccup,-15}{reservation.Accessible,-15}{reservation.TotalCost.ToString("C"),-15}");
-                        }
-
-                        loopOnOff = GetSpaceNumber(venue, loopOnOff, reservationCollection);
                     }
                 }
                 catch (FormatException ex)
@@ -371,42 +359,39 @@ namespace Capstone
         /// <returns>A bool that if false, will turn off the loop in the ReserveASpace method.</returns>
         private bool GetSpaceNumber(Venue venue, bool loopOnOff, ICollection<Reservation> reservationCollection)
         {
-            bool loopOnOff5 = true;
-            while (loopOnOff5)
+            Console.WriteLine();
+            Console.Write("Which space would you like to reserve (enter 0 to cancel)? ");
+            int spaceNumber = Convert.ToInt32(Console.ReadLine());
+            if (spaceNumber == 0)
             {
-                Console.WriteLine();
-                Console.Write("Which space would you like to reserve (enter 0 to cancel)? ");
-                int spaceNumber = Convert.ToInt32(Console.ReadLine());
-                if (spaceNumber == 0)
-                {
-                    return false;
+                return false;
 
+            }
+            else
+            {
+                int count = 0;
+                foreach (Reservation reservation in reservationCollection)
+                {
+
+                    if (reservation.SpaceId == spaceNumber)
+                    {
+                        count++;
+                    }
+                }
+                if (count < 1)
+                {
+
+                    Console.WriteLine("Invalid Selection");
                 }
                 else
                 {
-                    int count = 0;
-                    foreach (Reservation reservation in reservationCollection)
-                    {
-                        if (reservation.SpaceId == spaceNumber)
-                        {
-                            count++;
-                        }
-                    }
-                    if (count < 1)
-                    {
-                        Console.WriteLine("Invalid Selection");
-                    }
-                    else
-                    {
-                        loopOnOff5 = MakeReservationHelper(spaceNumber, reservationCollection, venue);
-                        return false;
-                        //loopOnOff5 = false;
 
-                    }
+                    return MakeReservationHelper(spaceNumber, reservationCollection, venue);
                 }
             }
 
-            return true;
+
+            return false;
         }
 
         /// <summary>
@@ -419,6 +404,7 @@ namespace Capstone
             bool loopOnOff4 = true;
             while (loopOnOff4)
             {
+
                 Console.Write("How many people will be in attendance? ");
                 attendees = Convert.ToInt32(Console.ReadLine());
 
@@ -541,7 +527,7 @@ namespace Capstone
             Console.WriteLine();
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
-            return false;
+            return true;
         }
     }
 }
