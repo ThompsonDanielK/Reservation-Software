@@ -75,7 +75,6 @@ namespace Capstone.DAL
                             };
                             results.Add(newVenue);
                         }
-
                     }
                 }
             }
@@ -84,7 +83,6 @@ namespace Capstone.DAL
             {
                 Console.WriteLine("Could not query the database: " + ex.Message);
             }
-
             return results;
         }
 
@@ -95,8 +93,7 @@ namespace Capstone.DAL
         /// <param name="results"></param>
         /// <returns>Returns selected venue.</returns>
         public Venue SelectVenue(int input, List<Venue> results)
-        {          
-
+        {       
             try
             {
                 return results[input - 1];

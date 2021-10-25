@@ -51,7 +51,6 @@ namespace Capstone.DAL
 
             try
             {
-
                 using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     conn.Open();
@@ -78,7 +77,6 @@ namespace Capstone.DAL
                             accessible = Convert.ToBoolean(reader["is_accessible"])
 
                         };
-
                         results.Add(reservation);
                     }
                 }
@@ -87,7 +85,6 @@ namespace Capstone.DAL
             {
                 Console.WriteLine("Could not query the database: " + ex.Message);
             }
-
             return results;
         }
 
@@ -99,11 +96,8 @@ namespace Capstone.DAL
         /// <returns>The reservation confirmation number.</returns>
         public int MakeReservation(Reservation reservation, string name)
         {          
-
             try
-            {
-                
-
+            {               
                 using (SqlConnection conn = new SqlConnection(this.connectionString))
                 {
                     conn.Open();
@@ -117,15 +111,12 @@ namespace Capstone.DAL
 
                     int confirmationNumber = Convert.ToInt32(command.ExecuteScalar());
                     return confirmationNumber;
-
                 }
             }
             catch (SqlException ex)
             {
                 Console.WriteLine("Could not query the database: " + ex.Message);
             }
-
-
             return 0;
         }
     }

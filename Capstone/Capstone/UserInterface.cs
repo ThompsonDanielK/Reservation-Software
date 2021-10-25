@@ -347,7 +347,6 @@ namespace Capstone
                     Console.WriteLine("Invalid input: " + ex.Message);
                 }
             }
-
         }
 
         /// <summary>
@@ -386,8 +385,6 @@ namespace Capstone
                     return MakeReservationHelper(spaceNumber, reservationCollection, venue);
                 }
             }
-
-
             return false;
         }
 
@@ -422,7 +419,6 @@ namespace Capstone
                     Console.WriteLine("Invalid input: " + ex.Message);
                 }
             }
-
             return attendees;
         }
 
@@ -456,7 +452,6 @@ namespace Capstone
                     Console.WriteLine("Invalid input: " + ex.Message);
                 }
             }
-
             return howManyDays;
         }
 
@@ -490,7 +485,6 @@ namespace Capstone
                     Console.WriteLine("Invalid input: " + ex.Message);
                 }
             }
-
             return date;
         }
 
@@ -511,9 +505,7 @@ namespace Capstone
                 {
                     reservation = reservation1;
                 }
-
             }
-
             Console.Write("Who is this reservation for? ");
             string name = Console.ReadLine();
             Console.WriteLine();
