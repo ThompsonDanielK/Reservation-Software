@@ -365,14 +365,12 @@ namespace Capstone
             if (spaceNumber == 0)
             {
                 return false;
-
             }
             else
             {
                 int count = 0;
                 foreach (Reservation reservation in reservationCollection)
                 {
-
                     if (reservation.SpaceId == spaceNumber)
                     {
                         count++;
@@ -380,7 +378,6 @@ namespace Capstone
                 }
                 if (count < 1)
                 {
-
                     Console.WriteLine("Invalid Selection");
                 }
                 else
@@ -404,18 +401,25 @@ namespace Capstone
             bool loopOnOff4 = true;
             while (loopOnOff4)
             {
-
                 Console.Write("How many people will be in attendance? ");
-                attendees = Convert.ToInt32(Console.ReadLine());
 
-                if (attendees < 1)
+                try
                 {
-                    Console.WriteLine("You cannot make reservations for less than 1 person. Please input a vaild amount of people attending.");
-                    Console.WriteLine();
+                    attendees = Convert.ToInt32(Console.ReadLine());
+
+                    if (attendees < 1)
+                    {
+                        Console.WriteLine("You cannot make reservations for less than 1 person. Please input a vaild amount of people attending.");
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        loopOnOff4 = false;
+                    }
                 }
-                else
+                catch (FormatException ex)
                 {
-                    loopOnOff4 = false;
+                    Console.WriteLine("Invalid input: " + ex.Message);
                 }
             }
 
@@ -433,16 +437,23 @@ namespace Capstone
             while (loopOnOff3)
             {
                 Console.Write("How many days will you need the space? ");
-                howManyDays = Convert.ToInt32(Console.ReadLine());
+                try
+                {
+                    howManyDays = Convert.ToInt32(Console.ReadLine());
 
-                if (howManyDays < 1)
-                {
-                    Console.WriteLine("You cannot make reservations for less than 1 day. Please input a vaild amount of days.");
-                    Console.WriteLine();
+                    if (howManyDays < 1)
+                    {
+                        Console.WriteLine("You cannot make reservations for less than 1 day. Please input a vaild amount of days.");
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        loopOnOff3 = false;
+                    }
                 }
-                else
+                catch (FormatException ex)
                 {
-                    loopOnOff3 = false;
+                    Console.WriteLine("Invalid input: " + ex.Message);
                 }
             }
 
@@ -460,16 +471,23 @@ namespace Capstone
             while (loopOnOff2)
             {
                 Console.Write("When do you need the space? ");
-                date = Convert.ToDateTime(Console.ReadLine());
+                try
+                {
+                    date = Convert.ToDateTime(Console.ReadLine());
 
-                if (date < DateTime.Now)
-                {
-                    Console.WriteLine("You cannot make reservations on dates in the past. Please input a valid date.");
-                    Console.WriteLine();
+                    if (date < DateTime.Now)
+                    {
+                        Console.WriteLine("You cannot make reservations on dates in the past. Please input a valid date.");
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        loopOnOff2 = false;
+                    }
                 }
-                else
+                catch (FormatException ex)
                 {
-                    loopOnOff2 = false;
+                    Console.WriteLine("Invalid input: " + ex.Message);
                 }
             }
 
